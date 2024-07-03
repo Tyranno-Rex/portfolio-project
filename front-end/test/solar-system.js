@@ -73,7 +73,7 @@
         camera.position.x += (mouseX - camera.position.x) * 0.005;
         camera.position.y += (mouseY - camera.position.y) * 0.005;
         camera.position.z += (mouseWheel - camera.position.z) * 0.05;
-        earthGroup.rotation.y += 0.01;
+        // earthGroup.rotation.y += 0.01;
         camera.lookAt(scene.position);
         renderer.render(scene, camera);
     }
@@ -122,7 +122,6 @@
         stars = new THREE.PointCloud(geometry, starStuff);
         scene.add(stars);
 
-
         // 태양 생성
         var sunGeometry = new THREE.SphereGeometry(100, 32, 32);  // 적절한 크기로 설정
         var sunMaterial = new THREE.MeshBasicMaterial({ 
@@ -133,25 +132,107 @@
         
         var sun = new THREE.Mesh(sunGeometry, sunMaterial);
         sun.position.set(0, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(sun);
+
         
-        
-        
-        // 지구 생성
-        var earthGeometry = new THREE.SphereGeometry(10, 32, 32);  // 적절한 크기로 설정
-        var earthMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x0000ff, 
+        var mercuryGeometry = new THREE.SphereGeometry(0.7, 32, 32);  // 적절한 크기로 설정
+        var mercuryMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xC0C0C0,
             transparent: true,
             opacity: 1
         });
         
-        var earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        earthGroup = new THREE.Group();
-        earth.position.set(200, 0, 0);  // 지구의 위치를 태양에서 200만큼 떨어진 위치로 설정
-        earthGroup.add(sun);
-        earthGroup.add(earth);
-        scene.add(earthGroup);
-    }
+        var mercury = new THREE.Mesh(mercuryGeometry, mercuryMaterial);
+        mercury.position.set(120, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(mercury);
 
+
+        var venusGeometry = new THREE.SphereGeometry(1.6, 32, 32);  // 적절한 크기로 설정
+
+        var venusMaterial = new THREE.MeshBasicMaterial({
+            color: 0xCC9966,
+            transparent: true,
+            opacity: 1
+        });
+
+        var venus = new THREE.Mesh(venusGeometry, venusMaterial);
+        venus.position.set(150, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(venus);
+
+
+        var earthGeometry = new THREE.SphereGeometry(1.8, 32, 32);  // 적절한 크기로 설정
+        var earthMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x0080FF,
+            transparent: true,
+            opacity: 1
+        });
+
+        var earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        earth.position.set(200, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(earth);
+
+
+        var marsGeometry = new THREE.SphereGeometry(1, 32, 32);  // 적절한 크기로 설정
+        var marsMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xCC3300, 
+            transparent: true,
+            opacity: 1
+        });
+
+        var mars = new THREE.Mesh(marsGeometry, marsMaterial);
+        mars.position.set(240, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(mars);
+
+
+        var jupiterGeometry = new THREE.SphereGeometry(20, 32, 32);  // 적절한 크기로 설정
+        var jupiterMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xFFFFFF, 
+            transparent: true,
+            opacity: 1
+        });
+
+        var jupiter = new THREE.Mesh(jupiterGeometry, jupiterMaterial);
+        jupiter.position.set(300, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(jupiter);
+
+
+        var saturnGeometry = new THREE.SphereGeometry(16, 32, 32);  // 적절한 크기로 설정
+        var saturnMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xFFFF99, 
+            transparent: true,
+            opacity: 1
+        });
+
+        var saturn = new THREE.Mesh(saturnGeometry, saturnMaterial);
+        saturn.position.set(400, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(saturn);
+
+
+        var uranusGeometry = new THREE.SphereGeometry(15, 32, 32);  // 적절한 크기로 설정
+        var uranusMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x66CCCC, 
+            transparent: true,
+            opacity: 1
+        });
+
+        var uranus = new THREE.Mesh(uranusGeometry, uranusMaterial);
+        uranus.position.set(600, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(uranus);
+
+
+        var neptuneGeometry = new THREE.SphereGeometry(15, 32, 32);  // 적절한 크기로 설정
+        var neptuneMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x0066CC, 
+            transparent: true,
+            opacity: 1
+        });
+
+
+        var neptune = new THREE.Mesh(neptuneGeometry, neptuneMaterial);
+        neptune.position.set(4497, 0, 0);  // 태양의 위치를 중앙으로 설정
+        scene.add(neptune);
+    }
+    
     function onMouseMove(e) {
         mouseX = e.clientX - windowHalfX;
         mouseY = e.clientY - windowHalfY;
