@@ -63,7 +63,8 @@
 
         window.addEventListener('resize', onWindowResize, false);
         document.addEventListener('mousemove', onMouseMove, false);
-        document.addEventListener('wheel', onMouseWheel, false);
+        document.addEventListener('mousedown', onMouseDown, false);
+        document.addEventListener('mouseup', onMouseUp, false);
     }
 
     function animate() {
@@ -213,13 +214,55 @@
 
     }
 
-    function onMouseMove(e) {
-        mouseX = e.clientX - windowHalfX;
-        mouseY = e.clientY - windowHalfY;
-    }
+    // function onMouseMove(e) {
+    //     mouseX = e.clientX - windowHalfX;
+    //     mouseY = e.clientY - windowHalfY;
+    // }
 
     function onMouseWheel(e) {
         mouseWheel += e.deltaY * 0.05; // Adjust the sensitivity as necessary
     }
 
+
+
+    // let mouseX = 0, mouseY = 0;
+    // let windowHalfX = window.innerWidth / 2;
+    // let windowHalfY = window.innerHeight / 2;
+    let isMouseDown = false;
+    let startX = 0, startY = 0;
+    let deltaX = 0, deltaY = 0;
+
+    // 마우스 이동 이벤트 핸들러
+    function onMouseMove(e) {
+        if (isMouseDown) {
+            mouseX = e.clientX - startX;
+            mouseY = e.clientY - startY;
+            // deltaX = e.clientX - startX;
+            // deltaY = e.clientY - startY;
+            // 화면을 전환할 때 사용할 로직을 여기에 추가합니다.
+            // 예: 화면을 이동시키거나 특정 요소를 움직이는 등의 동작
+            // console.log('Moving screen:', deltaX, deltaY);
+            // 예: 화면 전환 효과 적용
+            // document.body.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        }
+    }
+
+    // 마우스 다운 이벤트 핸들러
+    function onMouseDown(e) {
+        isMouseDown = true;
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+
+    // 마우스 업 이벤트 핸들러
+    function onMouseUp(e) {
+        isMouseDown = false;
+        // 화면 이동 완료 후 초기화
+        // deltaX = 0;
+        // deltaY = 0;
+        startX = 0;
+        startY = 0;
+
+        document.body.style.transform = 'none';
+    }
 })();

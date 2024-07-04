@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>=^.^=</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<!-- <div class="info"> -->
+	<!-- <p><a href="https://github.com/yomotsu/camera-controls">GitHub repo</a></p> -->
+	<!-- <label><input type="checkbox" onchange="cameraControls.verticalDragToForward = this.checked">vertical drag to move forward</label>
+	<br>
+	<label><input type="checkbox" onchange="cameraControls.dollyToCursor = this.checked">dolly to cursor</label>
+	<br>
+	<label><input type="checkbox" onchange="cameraControls.infinityDolly = this.checked">infinity dolly</label>
+	<br> -->
+	<!-- <button onclick="cameraControls.rotate(  45 * THREE.MathUtils.DEG2RAD, 0, true )">rotate theta 45deg</button>
+	<button onclick="cameraControls.rotate( -90 * THREE.MathUtils.DEG2RAD, 0, true )">rotate theta -90deg</button>
+	<button onclick="cameraControls.rotate( 360 * THREE.MathUtils.DEG2RAD, 0, true )">rotate theta 360deg</button>
+	<button onclick="cameraControls.rotate( 0, 20 * THREE.MathUtils.DEG2RAD, true )">rotate phi 20deg</button> -->
+	<!-- <br> -->
+	<!-- <!-- <button onclick="cameraControls.truck(  1,  0, true)">truck( 1, 0 )</button> -->
+	<!-- <button onclick="cameraControls.truck(  0,  1, true)">truck( 0, 1 )</button>
+	<button onclick="cameraControls.truck( -1, -1, true )">truck( -1, -1 )</button> -->
+	<!-- <br> -->
+	<!-- <button onclick="cameraControls.zoom( camera.zoom / 2, true )">zoom `camera.zoom / 2`</button>
+	<button onclick="cameraControls.zoom( -camera.zoom / 2, true )">zoom `- camera.zoom / 2`</button> -->
+	<!-- <br> -->
+	<!-- <button onclick="cameraControls.moveTo( 3, 5, 2, true )">move to( 3, 5, 2 )</button>
+	<button onclick="customFitTo()">fit to the bounding box of the mesh</button>
+	<button onclick="cameraControls.reset( true )">reset</button> -->
+	<!-- <br> -->
+	<!-- cameraControls.mouseButtons.wheel =
+	<select onchange="cameraControls.mouseButtons.wheel = CameraControls.ACTION[ this.value ]">
+		<option value="ZOOM" selected>CameraControls.ACTION.ZOOM</option>
+		<option value="DOLLY">CameraControls.ACTION.DOLLY</option>
+	</select> -->
+<!-- </div> -->
+<script async src="https://unpkg.com/es-module-shims@1.8.2/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+	"imports": {
+		"three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+		"three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+	}
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import * as holdEvent from "https://unpkg.com/hold-event@0.2.0/dist/hold-event.module.js";
+import CameraControls from './dist/camera-controls.module.js';
+CameraControls.install( { THREE: THREE } );
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+const clock = new THREE.Clock();
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 100 );
+
+const EPS = 1e-5;
+// in order to archive FPS look, set EPSILON for the distance to the center
+camera.position.set( 0, 0, EPS );
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize( width, height );
+document.body.appendChild( renderer.domElement );
+
+const cameraControls = new CameraControls( camera, renderer.domElement );
+cameraControls.minDistance = cameraControls.maxDistance = 1;
+cameraControls.azimuthRotateSpeed = - 0.3; // negative value to invert rotation direction
+cameraControls.polarRotateSpeed   = - 0.3; // negative value to invert rotation direction
+cameraControls.truckSpeed = 10;
+cameraControls.mouseButtons.wheel = CameraControls.ACTION.ZOOM;
+cameraControls.touches.two = CameraControls.ACTION.TOUCH_ZOOM_TRUCK;
+cameraControls.saveState();
+
+const KEYCODE = {
+	W: 87,
+	A: 65,
+	S: 83,
+	D: 68,
+	ARROW_LEFT : 37,
+	ARROW_UP   : 38,
+	ARROW_RIGHT: 39,
+	ARROW_DOWN : 40,
+};
+
+const wKey = new holdEvent.KeyboardKeyHold( KEYCODE.W, 16.666 );
+const aKey = new holdEvent.KeyboardKeyHold( KEYCODE.A, 16.666 );
+const sKey = new holdEvent.KeyboardKeyHold( KEYCODE.S, 16.666 );
+const dKey = new holdEvent.KeyboardKeyHold( KEYCODE.D, 16.666 );
+aKey.addEventListener( 'holding', function( event ) { cameraControls.truck( - 0.01 * event.deltaTime, 0, false ) } );
+dKey.addEventListener( 'holding', function( event ) { cameraControls.truck(   0.01 * event.deltaTime, 0, false ) } );
+wKey.addEventListener( 'holding', function( event ) { cameraControls.forward(   0.01 * event.deltaTime, false ) } );
+sKey.addEventListener( 'holding', function( event ) { cameraControls.forward( - 0.01 * event.deltaTime, false ) } );
+
+var starQty = 10000;
+var starGemoetry = new THREE.BufferGeometry();
+var startPositions = new Float32Array(starQty * 3);
+
+for (var i = 0; i < starQty; i++) {
+	var i3 = i * 3;
+	startPositions[i3] = (Math.random()*200) - 100;
+	startPositions[i3 + 1] = (Math.random()*200) - 100;
+	startPositions[i3 + 2] = (Math.random()*200) - 100;
+}
+
+starGemoetry.setAttribute('position', new THREE.BufferAttribute(startPositions, 3));
+
+var starMaterial = new THREE.PointsMaterial({
+	size: 0.1,
+	transparent: true,
+	opacity: 0.7
+});
+
+var stars = new THREE.Points(starGemoetry, starMaterial);
+scene.add(stars);
+
+const gridHelper = new THREE.GridHelper( 50, 50 );
+gridHelper.position.y = - 1;
+scene.add( gridHelper );
+
+
+
+fetch("http://localhost:8000/repos")
+.then((response) => {
+	if (!response.ok) {
+		throw new Error('Network response was not ok');
+	}
+	return response.json();
+})
+.then((data) => {
+	handleData(data);
+})
+.catch((error) => {
+	console.error('There has been a problem with your fetch operation:', error);
+});
+
+function handleData(response_data) {
+	var repos = [];
+	var positions = [];
+
+	for (var i = 0; i < response_data.length; i++) {
+		repos.push(response_data[i].repo);
+		positions.push(response_data[i].position);
+	}
+
+	for (var i = 0; i < repos.length; i++) {
+		var moon_geometry = new THREE.SphereGeometry(5, 32, 16);
+		var moon_material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
+
+		moon_sphere.position.set(positions[i][0] * 10, positions[i][1] * 10, positions[i][2] * 10);
+		scene.add(moon_sphere);
+
+// 		var moon_text = document.createElement('div');
+// 		moon_text.className = 'label';
+// 		moon_text.textContent = repos[i];
+// 		var moon_label = new THREE.CSS2DObject(moon_text);
+// 		moon_label.position.set(positions[i][0] * 10, positions[i][1] * 10, positions[i][2] * 10);
+// 		scene.add(moon_label);
+	}
+}
+
+
+
+
+
+
+
+
+
+renderer.render( scene, camera );
+
+
+
+
+
+( function anim () {
+
+	const delta = clock.getDelta();
+	const elapsed = clock.getElapsedTime();
+	const updated = cameraControls.update( delta );
+
+	// if ( elapsed > 30 ) { return; }
+
+	requestAnimationFrame( anim );
+
+	if ( updated ) {
+
+		renderer.render( scene, camera );
+		console.log( 'rendered' );
+
+	}
+
+} )();
+
+function customFitTo() {
+
+	const distanceToFit = cameraControls.getDistanceToFitBox( meshBBWidth, meshBBHeight, meshBBDepth );
+	cameraControls.moveTo(
+		mesh.position.x,
+		mesh.position.y,
+		mesh.position.z + distanceToFit,
+		true
+	);
+	cameraControls.rotateTo( 0, 90 * THREE.MathUtils.DEG2RAD, true );
+
+}
+
+// make variable available to browser console
+globalThis.THREE = THREE;
+globalThis.CameraControls = CameraControls;
+globalThis.camera = camera;
+globalThis.cameraControls = cameraControls;
+globalThis.customFitTo = customFitTo;
+</script>
+
+</body>
+</html>
