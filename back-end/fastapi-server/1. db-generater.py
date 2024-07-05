@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # 카테고리 중심 좌표 설정
+
+
+
 category_coords = {
     'graphic': np.array([0, 0, 0]),
     'ai': np.array([10, 0, 0]),
@@ -82,23 +85,29 @@ repos = {
     },
 }
 
-# 가중 평균 계산 함수
-def weighted_average(coords, weights):
-    return np.average(coords, axis=0, weights=weights)
+# 올바른 카테고리의 중심 좌표 구하기
 
-# 레포지토리 위치 계산
-repo_positions = {}
 
-for repo, categories in repos.items():
-    if isinstance(categories, dict):
-        for sub_repo, sub_categories in categories.items():
-            category_coords_list = [category_coords[cat] for cat in sub_categories]
-            weights = [len(sub_categories) - i for i in range(len(sub_categories))]
-            repo_positions[f'{repo}/{sub_repo}'] = weighted_average(category_coords_list, weights)
-    else:
-        category_coords_list = [category_coords[cat] for cat in categories]
-        weights = [len(categories) - i for i in range(len(categories))]
-        repo_positions[repo] = weighted_average(category_coords_list, weights)
+
+
+
+# # 가중 평균 계산 함수
+# def weighted_average(coords, weights):
+#     return np.average(coords, axis=0, weights=weights)
+
+# # 레포지토리 위치 계산
+# repo_positions = {}
+
+# for repo, categories in repos.items():
+#     if isinstance(categories, dict):
+#         for sub_repo, sub_categories in categories.items():
+#             category_coords_list = [category_coords[cat] for cat in sub_categories]
+#             weights = [len(sub_categories) - i for i in range(len(sub_categories))]
+#             repo_positions[f'{repo}/{sub_repo}'] = weighted_average(category_coords_list, weights)
+#     else:
+#         category_coords_list = [category_coords[cat] for cat in categories]
+#         weights = [len(categories) - i for i in range(len(categories))]
+#         repo_positions[repo] = weighted_average(category_coords_list, weights)
 
 # print(repo_positions)
 # print(category_coords)
@@ -133,16 +142,16 @@ for repo, categories in repos.items():
 
 
 # 3D 시각화
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
 
-# 카테고리 중심 플롯
-for category, coord in category_coords.items():
-    ax.scatter(*coord, label=category, s=100)
+# # 카테고리 중심 플롯
+# for category, coord in category_coords.items():
+#     ax.scatter(*coord, label=category, s=100)
 
-# 레포지토리 위치 플롯
-for repo, position in repo_positions.items():
-    ax.scatter(*position, label=repo, s=50)
+# # 레포지토리 위치 플롯
+# for repo, position in repo_positions.items():
+#     ax.scatter(*position, label=repo, s=50)
 
-ax.legend()
-plt.show()
+# ax.legend()
+# plt.show()

@@ -28,8 +28,8 @@ class FASTAPI_SERVER:
     def get_db(self):
         client = MongoClient('localhost', 27017)
         db = client['portfolio']
-        repos = db['repo']
-        categories = db['category']
+        repos = db['repo-positions']
+        categories = db['category-positions']
         return repos, categories
     
     def get_all_repos(self):
@@ -37,18 +37,13 @@ class FASTAPI_SERVER:
         json_repos = []
         for repo in repos:
             json_repos.append({'repo': repo['repo'], 'position': repo['position']})
-            # print(repo['repo'], repo['position'])
-        
         return json_repos
-        # return repos
     
     def get_all_categories(self):
         categories = self.categories.find()
         json_categories = []
-
         for category in categories:
-            json_categories.append({'category': category['category'], 'position': category['coord']})
-        
+            json_categories.append({'category': category['category'], 'position': category['position']})
         return json_categories
 
 if __name__ == "__main__":

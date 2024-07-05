@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width">
 <title>STAR ROAD</title>
 <link rel="stylesheet" href="./style.css">
+<style>
+    body { margin: 0; }
+    .label {
+      position: absolute;
+      color: black;
+      background-color: white;
+      font-size: 20px;
+      padding: 2px;
+      border-radius: 5px;
+    }
+</style>
 </head>
 <body>
 <script async src="https://unpkg.com/es-module-shims@1.8.2/dist/es-module-shims.js"></script>
@@ -18,6 +29,7 @@
 </script>
 <script type="module">
 import * as THREE from 'three';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import * as holdEvent from "https://unpkg.com/hold-event@0.2.0/dist/hold-event.module.js";
 import CameraControls from './dist/camera-controls.module.js';
 CameraControls.install( { THREE: THREE } );
@@ -34,6 +46,13 @@ camera.position.set( 0, 0, EPS );
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize( window.innerWidth, window.innerHeight );
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.pointerEvents = 'none'; // 마우스 이벤트를 차단
+document.body.appendChild( labelRenderer.domElement );
 
 const cameraControls = new CameraControls( camera, renderer.domElement );
 cameraControls.minDistance = cameraControls.maxDistance = 1;
@@ -116,35 +135,79 @@ function handleData(response_data) {
 	}
 
 	for (var i = 0; i < repos.length; i++) {
-		var moon_geometry = new THREE.SphereGeometry(5, 32, 16);
+		var moon_geometry = new THREE.SphereGeometry(3, 32, 16);
 		var moon_material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
-
-		moon_sphere.position.set(positions[i][0] * 10, positions[i][1] * 10, positions[i][2] * 10);
+		// -10 ~ 10 사이의 랜덤한 값을 더해주어 겹치지 않게 한다.
+		var randomx = Math.random() * 20 - 10;
+		var randomy = Math.random() * 20 - 10;
+		var randomz = Math.random() * 20 - 10;
+		// var randomx = 0;
+		// var randomy = 0;
+		// var randomz = 0;
+		moon_sphere.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
 		scene.add(moon_sphere);
 
-// 		var moon_text = document.createElement('div');
-// 		moon_text.className = 'label';
-// 		moon_text.textContent = repos[i];
-// 		var moon_label = new THREE.CSS2DObject(moon_text);
-// 		moon_label.position.set(positions[i][0] * 10, positions[i][1] * 10, positions[i][2] * 10);
-// 		scene.add(moon_label);
+		var moon_text = document.createElement('div');
+		moon_text.className = 'label';
+		moon_text.textContent = repos[i];
+		moon_text.style.color = 'black';
+		moon_text.style.fontSize = '10px';
+		moon_text.style.backgroundColor = 'white';
+		var moon_label = new CSS2DObject(moon_text);
+		moon_label.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
+		scene.add(moon_label);
+	}
+}
+
+
+fetch("http://localhost:8000/categories")
+.then((response) => {
+	if (!response.ok) {
+		throw new Error('Network response was not ok');
+	}
+	return response.json();
+})
+.then((data) => {
+	handleData2(data);
+})
+.catch((error) => {
+	console.error('There has been a problem with your fetch operation:', error);
+});
+
+function handleData2(response_data) {
+	var categories = [];
+	var positions = [];
+
+	for (var i = 0; i < response_data.length; i++) {
+		categories.push(response_data[i].category);
+		positions.push(response_data[i].position);
+	}
+
+	for (var i = 0; i < categories.length; i++) {
+		var moon_geometry = new THREE.SphereGeometry(6, 32, 16);
+		var moon_material = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
+
+		moon_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
+		scene.add(moon_sphere);
+
+		var moon_text = document.createElement('div');
+		moon_text.className = 'label';
+		moon_text.textContent = categories[i];
+		moon_text.style.color = 'black';
+		moon_text.style.fontSize = '10px';
+		moon_text.style.backgroundColor = 'red';
+		var moon_label = new CSS2DObject(moon_text);
+		moon_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
+		scene.add(moon_label);
 	}
 }
 
 
 
 
-
-
-
-
-
 renderer.render( scene, camera );
-
-
-
-
 
 ( function anim () {
 
@@ -159,6 +222,7 @@ renderer.render( scene, camera );
 	if ( updated ) {
 
 		renderer.render( scene, camera );
+		labelRenderer.render( scene, camera );  
 		console.log( 'rendered' );
 
 	}
