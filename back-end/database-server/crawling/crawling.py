@@ -26,19 +26,9 @@ def crawling(github_id):
 
 
 
-    response2 = requests.get(repos[0]["url"])
+    response2 = requests.get(repos[1]["url"])
     soup2 = BeautifulSoup(response2.text, 'html.parser')
     readme = soup2.select_one("article.markdown-body.entry-content.container-lg").text.strip()
-    # print(readme)
-# Project Category - for crawling
-# PROJECT COMPLETION STATUS : TRUE
-# MULIT PROJECTS : TRUE
-
-# 'study-database': 'database'
-# 'study-os': 'os'
-# 'study-server': ['ai', 'network', 'backend', 'implement', 'cloud']
-
-    # 해당 내용은 이제 DB에 저장해야 한다
 
     Project_Crawling_info = readme.split('Project Category - for crawling')[1].strip()
     print(Project_Crawling_info)
@@ -47,13 +37,17 @@ def crawling(github_id):
     
     print(ProjectCompleteStatus)
     print(MultiProjects)
-    # if MultiProjects == 'TRUE':
-    #     ProjectCategory = Project_Crawling_info.split('PROJECT CATEGORY : ')[1].split('\n')[0]
-    #     print(ProjectCategory)
-    # else:
-    #     ProjectCategory = Project_Crawling_info.split('PROJECT CATEGORY : ')[1].split('\n')[0]
-    #     print(ProjectCategory)
-
+    subProject = []
+    category = []
+    if MultiProjects == 'TRUE':
+        # SUB PROJECTS : 'https://github.com/Tyranno-Rex/BE-study/tree/main/study-database', 'https://github.com/Tyranno-Rex/BE-study/tree/main/study-os/This-is-the-Linux', 'https://github.com/Tyranno-Rex/BE-study/tree/main/study-server'
+        ProjectCategory = Project_Crawling_info.split('SUB PROJECTS : ')[1].split('\n')[0]
+        subProject = ProjectCategory.split(', ')
+        print(subProject)
+    else:
+        ProjectCategory = Project_Crawling_info.split('CATEGORY : ')[1].split('\n')[0]
+        category = ProjectCategory.split(', ')
+        print(category)
     
     # # 1. 저장소의 readme를 크롤링한다
     # response2 = requests.get(repos[0]["url"])
