@@ -1,25 +1,142 @@
 import numpy as np
 from scipy.optimize import minimize
 
+# category_coords = {
+#     'graphic': np.array([5, 0, -2]),
+#     'ai': np.array([2, 0, -6]),
+#     'web/mobile': np.array([5, 0, -10]),
+#     'algorithm': np.array([2, 0, -14]),
+#     'os': np.array([2, 0, 2]),
+#     'network': np.array([5, 0, 6]),
+#     'game&simulation': np.array([2, 0, 10]),
+#     'security': np.array([5, 0, 14]),
+#     'optimization': np.array([5, 5, 0]),
+#     'implement': np.array([2, 5, -4]),
+#     'database': np.array([5, 5, -8]),
+#     'devops&publish': np.array([2, 5, 4]),
+#     'frontend': np.array([5, 5, 8]),
+#     'backend': np.array([2, -5, 0]),
+#     'fullstack': np.array([5, -5, -4]),
+#     'cloud': np.array([2, -5, -8]),
+#     'teamTask': np.array([5, -5, 4]),
+#     'other': np.array([2, -5, 8]),
+# }
+
+# {
+#   "distance": 156.80205,
+#   "optimal_coords": {
+#     "graphic": [
+#       5,
+#       -2,
+#       0
+#     ],
+#     "ai": [
+#       5,
+#       8,
+#       5
+#     ],
+#     "web/mobile": [
+#       2,
+#       -4,
+#       5
+#     ],
+#     "algorithm": [
+#       5,
+#       6,
+#       0
+#     ],
+#     "os": [
+#       2,
+#       -14,
+#       0
+#     ],
+#     "network": [
+#       2,
+#       -6,
+#       0
+#     ],
+#     "game&simulation": [
+#       2,
+#       0,
+#       -5
+#     ],
+#     "security": [
+#       5,
+#       -8,
+#       5
+#     ],
+#     "optimization": [
+#       5,
+#       4,
+#       -5
+#     ],
+#     "implement": [
+#       2,
+#       2,
+#       0
+#     ],
+#     "database": [
+#       5,
+#       14,
+#       0
+#     ],
+#     "devops&publish": [
+#       5,
+#       -4,
+#       -5
+#     ],
+#     "frontend": [
+#       5,
+#       0,
+#       5
+#     ],
+#     "backend": [
+#       2,
+#       10,
+#       0
+#     ],
+#     "fullstack": [
+#       5,
+#       -10,
+#       0
+#     ],
+#     "cloud": [
+#       2,
+#       8,
+#       -5
+#     ],
+#     "teamTask": [
+#       2,
+#       4,
+#       5
+#     ],
+#     "other": [
+#       2,
+#       -8,
+#       -5
+#     ]
+#   }
+# }
+
 category_coords = {
-    'graphic': np.array([5, 0, -2]),
-    'ai': np.array([2, 0, -6]),
-    'web/mobile': np.array([5, 0, -10]),
-    'algorithm': np.array([2, 0, -14]),
-    'os': np.array([2, 0, 2]),
-    'network': np.array([5, 0, 6]),
-    'game&simulation': np.array([2, 0, 10]),
-    'security': np.array([5, 0, 14]),
-    'optimization': np.array([5, 5, 0]),
-    'implement': np.array([2, 5, -4]),
-    'database': np.array([5, 5, -8]),
-    'devops&publish': np.array([2, 5, 4]),
-    'frontend': np.array([5, 5, 8]),
-    'backend': np.array([2, -5, 0]),
-    'fullstack': np.array([5, -5, -4]),
-    'cloud': np.array([2, -5, -8]),
-    'teamTask': np.array([5, -5, 4]),
-    'other': np.array([2, -5, 8]),
+    'graphic': np.array([5, -2, 0]),
+    'ai': np.array([5, 8, 5]),
+    'web/mobile': np.array([2, -4, 5]),
+    'algorithm': np.array([5, 6, 0]),
+    'os': np.array([2, -14, 0]),
+    'network': np.array([2, -6, 0]),
+    'game&simulation': np.array([2, 0, -5]),
+    'security': np.array([5, -8, 5]),
+    'optimization': np.array([5, 4, -5]),
+    'implement': np.array([2, 2, 0]),
+    'database': np.array([5, 14, 0]),
+    'devops&publish': np.array([5, -4, -5]),
+    'frontend': np.array([5, 0, 5]),
+    'backend': np.array([2, 10, 0]),
+    'fullstack': np.array([5, -10, 0]),
+    'cloud': np.array([2, 8, -5]),
+    'teamTask': np.array([2, 4, 5]),
+    'other': np.array([2, -8, -5]),
 }
 
 
@@ -84,11 +201,12 @@ repos = {
     },
 }
 
-category_len1 = [1]
-category_len2 = [1, 1]
-category_len3 = [1, 1, 1]
-category_len4 = [1, 1, 1, 1]
-category_len5 = [1, 1, 1, 1, 1]
+
+category_len1 = [2]
+category_len2 = [2, 1]
+category_len3 = [2, 1, 1]
+category_len4 = [2, 1, 1, 1]
+category_len5 = [2, 1, 1, 1, 1]
 
 def get_weights(categories, weights):
     weight_dict = {category: weight for category, weight in zip(categories, weights)}

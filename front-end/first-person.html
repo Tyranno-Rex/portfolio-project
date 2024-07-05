@@ -105,9 +105,6 @@ var starMaterial = new THREE.PointsMaterial({
 var stars = new THREE.Points(starGemoetry, starMaterial);
 scene.add(stars);
 
-const gridHelper = new THREE.GridHelper( 50, 50 );
-gridHelper.position.y = - 1;
-scene.add( gridHelper );
 
 
 
@@ -139,9 +136,9 @@ function handleData(response_data) {
 		var moon_material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
 		// -10 ~ 10 사이의 랜덤한 값을 더해주어 겹치지 않게 한다.
-		var randomx = Math.random() * 20 - 10;
-		var randomy = Math.random() * 20 - 10;
-		var randomz = Math.random() * 20 - 10;
+		var randomx = Math.random() * 10 - 5;
+		var randomy = Math.random() * 10 - 5;
+		var randomz = Math.random() * 10 - 5;
 		// var randomx = 0;
 		// var randomy = 0;
 		// var randomz = 0;

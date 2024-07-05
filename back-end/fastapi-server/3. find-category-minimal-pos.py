@@ -124,7 +124,9 @@ category_len5 = [1, 1, 1, 1, 1]
 
 def get_weights(categories, weights):
     weight_dict = {category: weight for category, weight in zip(categories, weights)}
+    print(weight_dict)
     return weight_dict
+
 
 category_weights = {
     'portfolio-project': get_weights(repos['portfolio-project'], category_len5),
