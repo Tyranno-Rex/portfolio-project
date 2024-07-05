@@ -1,6 +1,8 @@
 import numpy as np
+import random
 from scipy.optimize import minimize
-
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
 
 coords_data = [
     np.array([0, -5 ,0]),
@@ -44,27 +46,6 @@ categories_data = [
     'other',
 ]
 
-# 카테고리 중심 좌표 설정
-category_coords = {
-    'graphic': np.array([0, -5, 0]),
-    'ai': np.array([10, -5, 0]),
-    'web/mobile': np.array([0, 5, 0]),
-    'algorithm': np.array([0, -5, 10]),
-    'os': np.array([10, 5, 0]),
-    'network': np.array([10, -5, 10]),
-    'game&simulation': np.array([0, 5, 10]),
-    'security': np.array([10, 5, 10]),
-    'optimization': np.array([5, 5, 15]),
-    'implement': np.array([15, 5, 5]),
-    'database': np.array([5, 15, 5]),
-    'devops&publish': np.array([5, 5, 5]),
-    'frontend': np.array([0, 0, 5]),
-    'backend': np.array([10, 0, 5]),
-    'fullstack': np.array([5, 0, 5]),
-    'cloud': np.array([5, 0, 0]),
-    'teamTask': np.array([5, 10, 5]),
-    'other': np.array([5, 15, 15]),
-}
 
 # 레포지토리 데이터
 repos = {
@@ -213,24 +194,43 @@ def find_optimal_location(categories, weights, coords):
     # print(f'{categories} 최적의 위치: {result.x}, 거리: {distance}')
     return result.x, distance
 
-
 def make_new_category_coords():
     new_category_coords = {}
     cp_coords = coords_data.copy()
-    import random
     random.shuffle(cp_coords)
     for category in categories_data:
         new_category_coords[category] = cp_coords.pop()
     return new_category_coords
 
+client = MongoClient('localhost', 27017)
 
-for i in range(200):
+try:
+    # 연결 테스트
+    client.admin.command('ismaster')
+    db = client['github']
+    print('Connected to MongoDB')
+except ConnectionFailure:
+    print('MongoDB server not available')
+
+db = client['portfolio']
+collection = db['find_category_minimal_pos']
+
+# mongodb에서 가장 최근의 데이터를 가져옴
+try:
+    recent_data = collection.find().sort('_id', -1).limit(1)[0]
+    distance_total = recent_data['distance']
+    optimal_coords = {key: np.array(value) for key, value in recent_data['optimal_coords'].items()}
+    print(f'가장 최근의 데이터로 초기화: {distance_total}')
+except IndexError:
+    print('최근의 데이터가 없습니다.')
+
+
+i = 0
+while True:
     repo_optimal_locations = {}
     distance_try = 0
 
     new_category_coords = make_new_category_coords()
-    # print(new_category_coords)
-
     # 레포지토리 별 최적의 위치 계산
     for repo, categories in repos.items():
         if isinstance(categories, dict):
@@ -246,11 +246,18 @@ for i in range(200):
         distance_try += distance
     
     if distance_try < distance_total:
-        distance_total = distance_try
+        distance_total = round(distance_try, 5)
         optimal_locations = repo_optimal_locations
         optimal_coords = new_category_coords
+        # bson.errors.InvalidDocument: cannot encode object: array([7.20688665, 0.8878323 , 5.32456981]), of type: <class 'numpy.ndarray'>
+        collection.insert_one({
+            'distance': distance_total,
+            'optimal_coords': {key: value.tolist() for key, value in optimal_coords.items()}
+        })
+        
     
     print(f'{i+1}번째 시도: {distance_try}')
+    i += 1
 
 print(f'최적의 거리: {distance_total}')
 print(optimal_locations)
