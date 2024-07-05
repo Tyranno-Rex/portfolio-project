@@ -1,27 +1,27 @@
 import numpy as np
 from scipy.optimize import minimize
 
-# 카테고리 중심 좌표 설정
 category_coords = {
-    'graphic': np.array([0, -5, 0]),
-    'ai': np.array([10, -5, 0]),
-    'web/mobile': np.array([0, 5, 0]),
-    'algorithm': np.array([0, -5, 10]),
-    'os': np.array([10, 5, 0]),
-    'network': np.array([10, -5, 10]),
-    'game&simulation': np.array([0, 5, 10]),
-    'security': np.array([10, 5, 10]),
-    'optimization': np.array([5, 5, 15]),
-    'implement': np.array([15, 5, 5]),
-    'database': np.array([5, 15, 5]),
-    'devops&publish': np.array([5, 5, 5]),
-    'frontend': np.array([0, 0, 5]),
-    'backend': np.array([10, 0, 5]),
-    'fullstack': np.array([5, 0, 5]),
-    'cloud': np.array([5, 0, 0]),
-    'teamTask': np.array([5, 10, 5]),
-    'other': np.array([5, 15, 15]),
+    'graphic': np.array([5, 0, -2]),
+    'ai': np.array([2, 0, -6]),
+    'web/mobile': np.array([5, 0, -10]),
+    'algorithm': np.array([2, 0, -14]),
+    'os': np.array([2, 0, 2]),
+    'network': np.array([5, 0, 6]),
+    'game&simulation': np.array([2, 0, 10]),
+    'security': np.array([5, 0, 14]),
+    'optimization': np.array([5, 5, 0]),
+    'implement': np.array([2, 5, -4]),
+    'database': np.array([5, 5, -8]),
+    'devops&publish': np.array([2, 5, 4]),
+    'frontend': np.array([5, 5, 8]),
+    'backend': np.array([2, -5, 0]),
+    'fullstack': np.array([5, -5, -4]),
+    'cloud': np.array([2, -5, -8]),
+    'teamTask': np.array([5, -5, 4]),
+    'other': np.array([2, -5, 8]),
 }
+
 
 # 레포지토리 데이터
 repos = {
@@ -83,13 +83,6 @@ repos = {
         'Shell': ['os'],
     },
 }
-
-# 카테고리 별 가중치 설정
-# category_len1 = [12]
-# category_len2 = [8, 4]
-# category_len3 = [6, 4, 2]
-# category_len4 = [6, 4, 2, 1]
-# category_len5 = [5, 3, 2, 1, 1]
 
 category_len1 = [1]
 category_len2 = [1, 1]
