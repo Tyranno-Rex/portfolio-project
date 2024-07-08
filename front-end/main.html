@@ -15,6 +15,18 @@
       padding: 2px;
       border-radius: 5px;
     }
+	canvas {
+		cursor: grab;
+	}
+	canvas.-dragging {
+		cursor: grabbing;
+	}
+	canvas.-moving {
+		cursor: move;
+	}
+	canvas.-zoomIn {
+		cursor: zoom-in;
+	}
 </style>
 </head>
 <body>
@@ -40,9 +52,7 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 100 );
 
-const EPS = 1e-5;
-// in order to archive FPS look, set EPSILON for the distance to the center
-camera.position.set( 0, 0, EPS );
+camera.position.set( 0, 0, 10 );
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );
@@ -60,6 +70,8 @@ cameraControls.azimuthRotateSpeed = - 0.3; // negative value to invert rotation 
 cameraControls.polarRotateSpeed   = - 0.3; // negative value to invert rotation direction
 cameraControls.truckSpeed = 10;
 cameraControls.mouseButtons.wheel = CameraControls.ACTION.ZOOM;
+cameraControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
+cameraControls.mouseButtons.right = CameraControls.ACTION.TRUCK;
 cameraControls.touches.two = CameraControls.ACTION.TOUCH_ZOOM_TRUCK;
 cameraControls.saveState();
 
@@ -78,10 +90,13 @@ const wKey = new holdEvent.KeyboardKeyHold( KEYCODE.W, 16.666 );
 const aKey = new holdEvent.KeyboardKeyHold( KEYCODE.A, 16.666 );
 const sKey = new holdEvent.KeyboardKeyHold( KEYCODE.S, 16.666 );
 const dKey = new holdEvent.KeyboardKeyHold( KEYCODE.D, 16.666 );
-aKey.addEventListener( 'holding', function( event ) { cameraControls.truck( - 0.01 * event.deltaTime, 0, false ) } );
-dKey.addEventListener( 'holding', function( event ) { cameraControls.truck(   0.01 * event.deltaTime, 0, false ) } );
-wKey.addEventListener( 'holding', function( event ) { cameraControls.forward(   0.01 * event.deltaTime, false ) } );
-sKey.addEventListener( 'holding', function( event ) { cameraControls.forward( - 0.01 * event.deltaTime, false ) } );
+const spaceKey = new holdEvent.KeyboardKeyHold( 32, 16.666 );
+
+aKey.addEventListener( 'holding', function( event ) { cameraControls.truck( - 0.05 * event.deltaTime, 0, false ) } );
+dKey.addEventListener( 'holding', function( event ) { cameraControls.truck(   0.05 * event.deltaTime, 0, false ) } );
+wKey.addEventListener( 'holding', function( event ) { cameraControls.forward(   0.05 * event.deltaTime, false ) } );
+sKey.addEventListener( 'holding', function( event ) { cameraControls.forward( - 0.05 * event.deltaTime, false ) } );
+spaceKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0, -0.05 * event.deltaTime, false ) } );
 
 var starQty = 10000;
 var starGemoetry = new THREE.BufferGeometry();
@@ -105,9 +120,6 @@ var starMaterial = new THREE.PointsMaterial({
 var stars = new THREE.Points(starGemoetry, starMaterial);
 scene.add(stars);
 
-
-
-
 fetch("http://localhost:8000/repos")
 .then((response) => {
 	if (!response.ok) {
@@ -121,6 +133,10 @@ fetch("http://localhost:8000/repos")
 .catch((error) => {
 	console.error('There has been a problem with your fetch operation:', error);
 });
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let planets = [];
 
 function handleData(response_data) {
 	var repos = [];
@@ -145,18 +161,17 @@ function handleData(response_data) {
 		moon_sphere.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
 		scene.add(moon_sphere);
 
-		var moon_text = document.createElement('div');
-		moon_text.className = 'label';
-		moon_text.textContent = repos[i];
-		moon_text.style.color = 'black';
-		moon_text.style.fontSize = '10px';
-		moon_text.style.backgroundColor = 'white';
-		var moon_label = new CSS2DObject(moon_text);
-		moon_label.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
-		scene.add(moon_label);
+		// var moon_text = document.createElement('div');
+		// moon_text.className = 'label';
+		// moon_text.textContent = repos[i];
+		// moon_text.style.color = 'black';
+		// moon_text.style.fontSize = '10px';
+		// moon_text.style.backgroundColor = 'white';
+		// var moon_label = new CSS2DObject(moon_text);
+		// moon_label.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
+		// scene.add(moon_label);
 	}
 }
-
 
 fetch("http://localhost:8000/categories")
 .then((response) => {
@@ -198,21 +213,35 @@ function handleData2(response_data) {
 		var moon_label = new CSS2DObject(moon_text);
 		moon_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
 		scene.add(moon_label);
+		planets.push(moon_sphere);
 	}
 }
 
 
+function onMouseClick(event) {
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+	raycaster.setFromCamera(mouse, camera);
+
+	const intersects = raycaster.intersectObjects(planets);
+
+	if (intersects.length > 0) {
+		const target = intersects[0].object.position;
+		cameraControls.moveTo(target.x, target.y, target.z, true);
+	}
+}
 
 
+renderer.domElement.addEventListener('click', onMouseClick, false);
 renderer.render( scene, camera );
+
 
 ( function anim () {
 
 	const delta = clock.getDelta();
 	const elapsed = clock.getElapsedTime();
 	const updated = cameraControls.update( delta );
-
-	// if ( elapsed > 30 ) { return; }
 
 	requestAnimationFrame( anim );
 
