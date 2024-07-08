@@ -1,16 +1,6 @@
 add readme to check conntection with jira
 
 
-        <!-- git_readme = git_soup.select_one("article.markdown-body.entry-content.container-lg").text.strip()
-        project_crawling_info = git_readme.split('Project Crawling')[1].strip()
-        project_name = project_crawling_info.split('PROJECT_NAME : ')[1].split('\n')[0]
-        project_description = project_crawling_info.split('PROJECT_DESCRIPTION : ')[1].split('\n')[0]
-        project_url = project_crawling_info.split('PROJECT_URL : ')[1].split('\n')[0]
-        project_complete_status = project_crawling_info.split('PROJECT_COMPLETION_STATUS : ')[1].split('\n')[0]
-        multi_projects = project_crawling_info.split('PROJECT_MULTI : ')[1].split('\n')[0]
-        project_category = project_crawling_info.split('PROJECT_SUBPROJECT : ')[1].split('\n')[0]
-        sub_project = project_category.split(', ') -->
-
 ## Project Crawling
 
 PROJECT_NAME: portfolio-project
