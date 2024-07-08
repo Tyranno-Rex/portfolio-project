@@ -80,23 +80,25 @@ const KEYCODE = {
 	A: 65,
 	S: 83,
 	D: 68,
-	ARROW_LEFT : 37,
-	ARROW_UP   : 38,
-	ARROW_RIGHT: 39,
-	ARROW_DOWN : 40,
+	Q: 81,
+	E: 69
 };
 
 const wKey = new holdEvent.KeyboardKeyHold( KEYCODE.W, 16.666 );
 const aKey = new holdEvent.KeyboardKeyHold( KEYCODE.A, 16.666 );
 const sKey = new holdEvent.KeyboardKeyHold( KEYCODE.S, 16.666 );
 const dKey = new holdEvent.KeyboardKeyHold( KEYCODE.D, 16.666 );
-const spaceKey = new holdEvent.KeyboardKeyHold( 32, 16.666 );
+const qKey = new holdEvent.KeyboardKeyHold( KEYCODE.Q, 16.666 );
+const eKey = new holdEvent.KeyboardKeyHold( KEYCODE.E, 16.666 );
 
 aKey.addEventListener( 'holding', function( event ) { cameraControls.truck( - 0.05 * event.deltaTime, 0, false ) } );
 dKey.addEventListener( 'holding', function( event ) { cameraControls.truck(   0.05 * event.deltaTime, 0, false ) } );
 wKey.addEventListener( 'holding', function( event ) { cameraControls.forward(   0.05 * event.deltaTime, false ) } );
 sKey.addEventListener( 'holding', function( event ) { cameraControls.forward( - 0.05 * event.deltaTime, false ) } );
-spaceKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0, -0.05 * event.deltaTime, false ) } );
+qKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0,   0.05 * event.deltaTime, false ) } );
+eKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0, - 0.05 * event.deltaTime, false ) } );
+
+
 
 var starQty = 10000;
 var starGemoetry = new THREE.BufferGeometry();

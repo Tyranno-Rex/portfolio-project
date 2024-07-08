@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
 
 # github의 닉네임을 받는다
 def get_github_id():
@@ -30,6 +32,17 @@ def crawling(github_id):
     soup2 = BeautifulSoup(response2.text, 'html.parser')
     readme = soup2.select_one("article.markdown-body.entry-content.container-lg").text.strip()
 
+    print(repos[1]["name"])
+    
+    client = MongoClient('localhost', 27017)
+    try:
+        # 연결 테스트
+        client.admin.command('ismaster')
+        print('Connected to MongoDB')
+    except ConnectionFailure:
+        print('MongoDB server not available')
+
+    
     Project_Crawling_info = readme.split('Project Category - for crawling')[1].strip()
     print(Project_Crawling_info)
     ProjectCompleteStatus = Project_Crawling_info.split('PROJECT COMPLETION STATUS : ')[1].split('\n')[0]
@@ -48,21 +61,15 @@ def crawling(github_id):
         ProjectCategory = Project_Crawling_info.split('CATEGORY : ')[1].split('\n')[0]
         category = ProjectCategory.split(', ')
         print(category)
-    
-    # # 1. 저장소의 readme를 크롤링한다
-    # response2 = requests.get(repos[0]["url"])
-    # soup2 = BeautifulSoup(response2.text, 'html.parser')
-    # readme = soup2.select_one("article.markdown-body.entry-content.container-lg").text.strip()
-    # print(readme)
 
-    
-    # first_file = soup(class_="Link--primary")
-    # for i, file in enumerate(first_file):
-    #     print(file.text)
-    # print()
-    
-    
-    # https://github.com/Tyranno-Rex/42seoul-course
+    db = client['github']
+    collection = db[repos[1]["name"]]
+    collection.insert_one({"name": repos[1]["name"], 
+                            "readme": readme, 
+                            "ProjectCompleteStatus": ProjectCompleteStatus, 
+                            "MultiProjects": MultiProjects, 
+                            "subProject": subProject, 
+                            "category": category})
 
 
 if __name__ == "__main__":
