@@ -21,12 +21,12 @@ coords_data = [
     np.array([2, -14, 0]),
     np.array([2, 2, 0]),
     np.array([5, 6, 0]),
-    # np.array([2, 10, 0]),
+    np.array([2, 10, 0]),
     # np.array([5, 14, 0]),
     np.array([5, 0, 5]),
     np.array([2, -4, 5]),
-    # np.array([5, -8, 5]),
-    # np.array([2, 4, 5]),
+    np.array([5, -8, 5]),
+    np.array([2, 4, 5]),
     np.array([5, 8, 5]),
     np.array([2, 0, -5]),
     np.array([5, -4, -5]),
@@ -40,10 +40,10 @@ categories_data = [
     'ai',
     'web/mobile',
     'algorithm',
-    # 'os',
+    'os',
     'network',
     'game&simulation',
-    # 'security',
+    'security',
     'optimization',
     'implement',
     # 'database',
@@ -52,7 +52,7 @@ categories_data = [
     'backend',
     'fullstack',
     'cloud',
-    # 'teamTask',
+    'teamTask',
     'other',
 ]
 
@@ -133,7 +133,6 @@ category_len5 = [1, 1, 1, 1, 1]
 
 def get_weights(categories, weights):
     weight_dict = {category: weight for category, weight in zip(categories, weights)}
-    print(weight_dict)
     return weight_dict
 
 
@@ -206,16 +205,16 @@ def find_optimal_location(categories, weights, coords):
     # print(f'{categories} 최적의 위치: {result.x}, 거리: {distance}')
     return result.x, distance
 
-def make_new_category_coords():
+def make_new_category_coords(distance_try):
     new_category_coords = {}
     cp_coords = coords_data.copy()
     random.shuffle(cp_coords)
     for category in categories_data:
         new_category_coords[category] = cp_coords.pop()
     new_category_coords["database"] = np.array([5, 14, 0])
-    new_category_coords["os"] = np.array([2, 10, 0])
-    new_category_coords["security"] = np.array([5, 14, 0])
-    new_category_coords["teamTask"] = np.array([2, 4, 5])
+    # new_category_coords["os"] = np.array([2, 10, 0])
+    # new_category_coords["security"] = np.array([5, 14, 0])
+    # new_category_coords["teamTask"] = np.array([2, 4, 5])
     return new_category_coords
 
 client = MongoClient('localhost', 27017)
@@ -247,7 +246,7 @@ while True:
     repo_optimal_locations = {}
     distance_try = 0
 
-    new_category_coords = make_new_category_coords()
+    new_category_coords = make_new_category_coords(distance_try)
     # 레포지토리 별 최적의 위치 계산
     for repo, categories in repos.items():
         if isinstance(categories, dict):
@@ -266,7 +265,6 @@ while True:
         distance_total = round(distance_try, 5)
         optimal_locations = repo_optimal_locations
         optimal_coords = new_category_coords
-        # bson.errors.InvalidDocument: cannot encode object: array([7.20688665, 0.8878323 , 5.32456981]), of type: <class 'numpy.ndarray'>
         collection.insert_one({
             'distance': distance_total,
             'optimal_coords': {key: value.tolist() for key, value in optimal_coords.items()}
