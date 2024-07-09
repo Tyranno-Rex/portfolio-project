@@ -1,0 +1,74 @@
+[
+  {
+    "_id": { "$oid": "66879c1bd1a4cef9229dad93" },
+    "distance": 156.56701,
+    "optimal_coords": {
+      "graphic": [2, 10, 0],
+      "ai": [5, 0, 5],
+      "web/mobile": [2, -6, 0],
+      "algorithm": [5, 8, 5],
+      "os": [2, -4, 5],
+      "network": [2, 2, 0],
+      "game&simulation": [2, 8, -5],
+      "security": [5, -2, 0],
+      "optimization": [5, 6, 0],
+      "implement": [5, 4, -5],
+      "database": [5, 14, 0],
+      "devops&publish": [2, 0, -5],
+      "frontend": [5, -10, 0],
+      "backend": [2, -8, -5],
+      "fullstack": [5, -4, -5],
+      "cloud": [2, -14, 0],
+      "teamTask": [2, 4, 5],
+      "other": [5, -8, 5]
+    }
+  },
+  {
+    "_id": { "$oid": "66879ce6d1a4cef9229dad94" },
+    "distance": 156.28591,
+    "optimal_coords": {
+      "graphic": [2, 8, -5],
+      "ai": [5, 4, -5],
+      "web/mobile": [2, 2, 0],
+      "algorithm": [2, 10, 0],
+      "os": [5, 14, 0],
+      "network": [5, -2, 0],
+      "game&simulation": [2, -4, 5],
+      "security": [2, 4, 5],
+      "optimization": [5, -8, 5],
+      "implement": [5, -4, -5],
+      "database": [2, -14, 0],
+      "devops&publish": [5, 0, 5],
+      "frontend": [2, 0, -5],
+      "backend": [2, -6, 0],
+      "fullstack": [5, 8, 5],
+      "cloud": [5, 6, 0],
+      "teamTask": [2, -8, -5],
+      "other": [5, -10, 0]
+    }
+  },
+  {
+    "_id": { "$oid": "6687a451d1a4cef9229dad95" },
+    "distance": 145.91708,
+    "optimal_coords": {
+      "graphic": [5, -4, -5],
+      "ai": [5, -2, 0],
+      "web/mobile": [2, 2, 0],
+      "algorithm": [2, -6, 0],
+      "os": [5, 4, -5],
+      "network": [5, 6, 0],
+      "game&simulation": [2, -8, -5],
+      "security": [2, 4, 5],
+      "optimization": [5, -10, 0],
+      "implement": [2, 8, -5],
+      "database": [5, 14, 0],
+      "devops&publish": [5, 0, 5],
+      "frontend": [5, 8, 5],
+      "backend": [2, 10, 0],
+      "fullstack": [2, -4, 5],
+      "cloud": [2, 0, -5],
+      "teamTask": [5, -8, 5],
+      "other": [2, -14, 0]
+    }
+  }
+]

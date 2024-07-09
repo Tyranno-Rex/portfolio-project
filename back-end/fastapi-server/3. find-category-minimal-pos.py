@@ -5,6 +5,15 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
 
+# 다양한 시도를 통해서 해당 위치에 해당 카테고리를 배치했을 때 지금까지는 최적의 위치라고 판단이 되었다.
+# 때문에 이제는 이 최적의 위치를 저장하고, 이를 통해서 레포지토리들의 위치를 계산할 수 있도록 한다.
+# {
+#   "database": [5, 14, 0],
+#   "os": [2, 10, 0],
+#   "security": [5, -8, 5],
+#   "teamTask": [2, 4, 5]
+# }
+
 coords_data = [
     np.array([5, -2, 0]),
     np.array([2, -6, 0]),
@@ -12,12 +21,12 @@ coords_data = [
     np.array([2, -14, 0]),
     np.array([2, 2, 0]),
     np.array([5, 6, 0]),
-    np.array([2, 10, 0]),
-    np.array([5, 14, 0]),
+    # np.array([2, 10, 0]),
+    # np.array([5, 14, 0]),
     np.array([5, 0, 5]),
     np.array([2, -4, 5]),
-    np.array([5, -8, 5]),
-    np.array([2, 4, 5]),
+    # np.array([5, -8, 5]),
+    # np.array([2, 4, 5]),
     np.array([5, 8, 5]),
     np.array([2, 0, -5]),
     np.array([5, -4, -5]),
@@ -31,19 +40,19 @@ categories_data = [
     'ai',
     'web/mobile',
     'algorithm',
-    'os',
+    # 'os',
     'network',
     'game&simulation',
-    'security',
+    # 'security',
     'optimization',
     'implement',
-    'database',
+    # 'database',
     'devops&publish',
     'frontend',
     'backend',
     'fullstack',
     'cloud',
-    'teamTask',
+    # 'teamTask',
     'other',
 ]
 
@@ -203,6 +212,10 @@ def make_new_category_coords():
     random.shuffle(cp_coords)
     for category in categories_data:
         new_category_coords[category] = cp_coords.pop()
+    new_category_coords["database"] = np.array([5, 14, 0])
+    new_category_coords["os"] = np.array([2, 10, 0])
+    new_category_coords["security"] = np.array([5, 14, 0])
+    new_category_coords["teamTask"] = np.array([2, 4, 5])
     return new_category_coords
 
 client = MongoClient('localhost', 27017)
@@ -216,6 +229,7 @@ except ConnectionFailure:
     print('MongoDB server not available')
 
 db = client['portfolio']
+collection2 = db['all_distance']
 collection = db['find_category_minimal_pos']
 
 # mongodb에서 가장 최근의 데이터를 가져옴
@@ -256,6 +270,10 @@ while True:
         collection.insert_one({
             'distance': distance_total,
             'optimal_coords': {key: value.tolist() for key, value in optimal_coords.items()}
+        })
+    else:
+        collection2.insert_one({
+            'distance': distance_try,
         })
         
     
