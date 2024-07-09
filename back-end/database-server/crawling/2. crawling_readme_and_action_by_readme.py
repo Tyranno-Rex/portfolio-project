@@ -95,14 +95,14 @@ class FASTAPI_CRON_SERVER:
         category = project_crawling_info.split('PROJECT_CATEGORY : ')[1].split('\n')[0]
         category = category.split(', ')
         return {
-                "project_name": project_name, 
-                "project_description": project_description, 
-                "project_url": project_url, 
-                "project_complete_status": project_complete_status, 
-                "multi_projects": multi_projects, 
-                "sub_project": sub_project,
-                "category": category,
-                "subproject_crawling_data": subproject_crawling_data
+            "project_name": project_name, 
+            "project_description": project_description, 
+            "project_url": project_url, 
+            "project_complete_status": project_complete_status, 
+            "multi_projects": multi_projects, 
+            "sub_project": sub_project,
+            "category": category,
+            "subproject_crawling_data": subproject_crawling_data
         }
 
     def crawling_main(self):

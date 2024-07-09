@@ -50,7 +50,7 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 100 );
+const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 1000);
 
 camera.position.set( 0, 0, 10 );
 const renderer = new THREE.WebGLRenderer();
@@ -74,6 +74,7 @@ cameraControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
 cameraControls.mouseButtons.right = CameraControls.ACTION.TRUCK;
 cameraControls.touches.two = CameraControls.ACTION.TOUCH_ZOOM_TRUCK;
 cameraControls.saveState();
+
 
 const KEYCODE = {
 	W: 87,
@@ -150,13 +151,20 @@ function handleData(response_data) {
 	}
 
 	for (var i = 0; i < repos.length; i++) {
-		var moon_geometry = new THREE.SphereGeometry(3, 32, 16);
-		var moon_material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+		var moon_geometry = new THREE.SphereGeometry(2, 32, 16);
+		// var moon_material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+		var moon_material = new THREE.MeshStandardMaterial({ 
+			color: 0xffffff,
+			// emissive: 0xffffff, // 발광 색상 설정
+			// emissiveIntensity: 2, // 발광 강도 설정
+			// transparent: true, // 투명하게 설정
+			// opacity: 0.5 // 투명도 설정 (0은 완전 투명, 1은 완전 불투명)
+		});
 		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
 		// -10 ~ 10 사이의 랜덤한 값을 더해주어 겹치지 않게 한다.
-		var randomx = Math.random() * 10 - 5;
-		var randomy = Math.random() * 10 - 5;
-		var randomz = Math.random() * 10 - 5;
+		var randomx = Math.random() * 16 - 8;
+		var randomy = Math.random() * 16 - 8;
+		var randomz = Math.random() * 16 - 8;
 		// var randomx = 0;
 		// var randomy = 0;
 		// var randomz = 0;
@@ -172,6 +180,16 @@ function handleData(response_data) {
 		// var moon_label = new CSS2DObject(moon_text);
 		// moon_label.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
 		// scene.add(moon_label);
+
+		
+		// const sphere1 = new THREE.SphereGeometry(2, 32, 16);
+
+		// // color를 랜덤한 4개의 값을 넣어준다.
+		// var light1 = new THREE.PointLight( 0xffffff, 100);
+		// light1.position.set( positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
+		// light1.add(new THREE.Mesh(sphere1, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1 })));
+		// scene.add( light1 );
+
 	}
 }
 
@@ -189,6 +207,15 @@ fetch("http://localhost:8000/categories")
 	console.error('There has been a problem with your fetch operation:', error);
 });
 
+function getRandomColor() {
+	var color = "";
+	// 너무 어두우면 안되니 최소한 각 색상이 8 이상이 되도록 한다.
+	for (var i = 0; i < 6; i++) {
+		color += Math.floor(Math.random() * 10 + 13).toString(16);
+	}
+	return parseInt(color, 16);
+}
+
 function handleData2(response_data) {
 	var categories = [];
 	var positions = [];
@@ -199,23 +226,49 @@ function handleData2(response_data) {
 	}
 
 	for (var i = 0; i < categories.length; i++) {
-		var moon_geometry = new THREE.SphereGeometry(6, 32, 16);
-		var moon_material = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+		var color1 = getRandomColor();
+		var color2 = getRandomColor();
+
+		var moon_geometry = new THREE.SphereGeometry(5, 32, 16);
+		var moon_material = new THREE.MeshStandardMaterial({ 
+			color : 0xffffff,
+			emissive: color1, // 발광 색상 설정
+			emissiveIntensity: 5, // 발광 강도 설정
+			transparent: true, // 투명하게 설정
+			opacity: 0.8 // 투명도 설정 (0은 완전 투명, 1은 완전 불투명)
+		});
+
 		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
 
 		moon_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
 		scene.add(moon_sphere);
+		planets.push(moon_sphere);
 
+		
 		var moon_text = document.createElement('div');
 		moon_text.className = 'label';
 		moon_text.textContent = categories[i];
 		moon_text.style.color = 'black';
 		moon_text.style.fontSize = '10px';
-		moon_text.style.backgroundColor = 'red';
+		// moon_text.style.backgroundColor = 'red';
 		var moon_label = new CSS2DObject(moon_text);
 		moon_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
 		scene.add(moon_label);
-		planets.push(moon_sphere);
+
+		// 
+		const sphere1 = new THREE.SphereGeometry(2, 16, 8);
+		const sphere2 = new THREE.SphereGeometry(2, 16, 8);
+
+		// color를 랜덤한 4개의 값을 넣어준다.
+		var light1 = new THREE.PointLight( color1, 1000);
+		var light2 = new THREE.PointLight( color2, 1000);
+		light1.position.set( positions[i][0] * 5 + 0.3, positions[i][1] * 5, positions[i][2] * 5);
+		light2.position.set( positions[i][0] * 5, positions[i][1] * 5 + 0.3, positions[i][2] * 5);
+		light1.add(new THREE.Mesh(sphere1, new THREE.MeshBasicMaterial({ color: color1, transparent: true, opacity: 0})));
+		light2.add(new THREE.Mesh(sphere2, new THREE.MeshBasicMaterial({ color: color2, transparent: true, opacity: 0})));
+		scene.add( light1 );
+		scene.add( light2 );
+
 	}
 }
 
@@ -237,24 +290,23 @@ function onMouseClick(event) {
 
 renderer.domElement.addEventListener('click', onMouseClick, false);
 renderer.render( scene, camera );
-
-
 ( function anim () {
-
+	const time = performance.now() * 0.001;
 	const delta = clock.getDelta();
 	const elapsed = clock.getElapsedTime();
 	const updated = cameraControls.update( delta );
-
+	
 	requestAnimationFrame( anim );
-
+	
+	
+	
 	if ( updated ) {
-
 		renderer.render( scene, camera );
 		labelRenderer.render( scene, camera );  
 		console.log( 'rendered' );
-
+		
 	}
-
+	
 } )();
 
 function customFitTo() {
