@@ -189,16 +189,42 @@ except ConnectionFailure:
     print('MongoDB server not available')
 
 db = client['portfolio']
-collection = db['repo-positions']
+collection  = db['repo-positions']
 collection2 = db['category-positions']
+collection3 = db['repo-category']
+col = db['repo-category']
+
 
 # 레포지토리 위치 저장
-for repo, position in repo_optimal_locations.items():
-    if isinstance(position, dict):
-        for sub_repo, sub_position in position.items():
-            collection.insert_one({'repo': f'{repo}/{sub_repo}', 'position': sub_position.tolist()})
-    else:
-        collection.insert_one({'repo': repo, 'position': position.tolist()})
+# for repo, position in repo_optimal_locations.items():
+#     if isinstance(position, dict):
+#         for sub_repo, sub_position in position.items():
+#             col.insert_one({'repo': f'{repo}/{sub_repo}', 'position': sub_position.tolist()})
+#     else:
+#         collection.insert_one({'repo': repo, 'position': position.tolist()})
 
-for category, coord in category_coords.items():
-    collection2.insert_one({'category': category, 'position': coord.tolist()})
+# for category, coord in category_coords.items():
+#     col.insert_one({'category': category, 'position': coord.tolist()})
+
+
+
+
+
+# # 레포지토리 위치 저장
+# for repo, position in repo_optimal_locations.items():
+#     if isinstance(position, dict):
+#         for sub_repo, sub_position in position.items():
+#             collection.insert_one({'repo': f'{repo}/{sub_repo}', 'position': sub_position.tolist()})
+#     else:
+#         collection.insert_one({'repo': repo, 'position': position.tolist()})
+
+# for category, coord in category_coords.items():
+#     collection2.insert_one({'category': category, 'position': coord.tolist()})
+    
+
+# for repo, categories in repos.items():
+#     if isinstance(categories, dict):
+#         for sub_repo, sub_categories in categories.items():
+#             collection3.insert_one({'repo': f'{repo}/{sub_repo}', 'categories': sub_categories})
+#     else:
+#         collection3.insert_one({'repo': repo, 'categories': categories})

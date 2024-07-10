@@ -123,72 +123,11 @@ var starMaterial = new THREE.PointsMaterial({
 var stars = new THREE.Points(starGemoetry, starMaterial);
 scene.add(stars);
 
-fetch("http://localhost:8000/repos")
-.then((response) => {
-	if (!response.ok) {
-		throw new Error('Network response was not ok');
-	}
-	return response.json();
-})
-.then((data) => {
-	handleData(data);
-})
-.catch((error) => {
-	console.error('There has been a problem with your fetch operation:', error);
-});
-
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let planets = [];
 let orbitControls = [];
 
-function handleData(response_data) {
-	var repos = [];
-	var positions = [];
-
-	for (var i = 0; i < response_data.length; i++) {
-		repos.push(response_data[i].repo);
-		positions.push(response_data[i].position);
-	}
-
-	for (var i = 0; i < repos.length; i++) {
-		var moon_geometry = new THREE.SphereGeometry(1, 32, 16);
-		var moon_material = new THREE.MeshStandardMaterial({ 
-			color: 0xffffff,
-		});
-		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
-		var randomx = Math.random() * 16 - 8;
-		var randomy = Math.random() * 16 - 8;
-		var randomz = Math.random() * 16 - 8;
-		moon_sphere.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
-		scene.add(moon_sphere);
-		orbitControls.push({"moon": repos[i], "position": positions[i]})
-
-		// var moon_text = document.createElement('div');
-		// moon_text.className = 'label';
-		// moon_text.textContent = repos[i];
-		// moon_text.style.color = 'black';
-		// moon_text.style.fontSize = '10px';
-		// moon_text.style.backgroundColor = 'white';
-		// var moon_label = new CSS2DObject(moon_text);
-		// moon_label.position.set(positions[i][0] * 5 + randomx, positions[i][1] * 5 + randomy, positions[i][2] * 5 + randomz);
-		// scene.add(moon_label);
-	}
-}
-
-fetch("http://localhost:8000/categories")
-.then((response) => {
-	if (!response.ok) {
-		throw new Error('Network response was not ok');
-	}
-	return response.json();
-})
-.then((data) => {
-	handleData2(data);
-})
-.catch((error) => {
-	console.error('There has been a problem with your fetch operation:', error);
-});
 
 function getRandomColor() {
 	var color = "";
@@ -199,21 +138,39 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-function handleData2(response_data) {
+fetch("http://localhost:8000/repo-category")
+.then((response) => {
+	if (!response.ok) {
+		throw new Error('Network response was not ok');
+	}
+	return response.json();
+})
+.then((data) => {
+	makeStarRoad(data);
+})
+.catch((error) => {
+	console.error('There has been a problem with your fetch operation:', error);
+});
+
+let repoObjects = [];
+
+function makeStarRoad(data) {
+
 	var categories = [];
 	var positions = [];
+	var data_category = data["categories"];
 
-	for (var i = 0; i < response_data.length; i++) {
-		categories.push(response_data[i].category);
-		positions.push(response_data[i].position);
+	for (var i = 0; i < data_category.length; i++) {
+		categories.push(data_category[i].category);
+		positions.push(data_category[i].position);
 	}
 
 	for (var i = 0; i < categories.length; i++) {
 		var color1 = getRandomColor();
 		var color2 = getRandomColor();
 
-		var moon_geometry = new THREE.SphereGeometry(5, 32, 16);
-		var moon_material = new THREE.MeshStandardMaterial({ 
+		var sun_geometry = new THREE.SphereGeometry(5, 32, 16);
+		var sun_material = new THREE.MeshStandardMaterial({ 
 			color : 0xffffff,
 			emissive: color1, // 발광 색상 설정
 			emissiveIntensity: 5, // 발광 강도 설정
@@ -221,25 +178,24 @@ function handleData2(response_data) {
 			opacity: 0.8 // 투명도 설정 (0은 완전 투명, 1은 완전 불투명)
 		});
 
-		var moon_sphere = new THREE.Mesh(moon_geometry, moon_material);
+		var sun_sphere = new THREE.Mesh(sun_geometry, sun_material);
 
-		moon_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
-		scene.add(moon_sphere);
-		planets.push(moon_sphere);
+		sun_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
+		scene.add(sun_sphere);
+		planets.push(sun_sphere);
 		orbitControls.push({"sun": categories[i], "position": positions[i]})
 
 		
-		var moon_text = document.createElement('div');
-		moon_text.className = 'label';
-		moon_text.textContent = categories[i];
-		moon_text.style.color = 'black';
-		moon_text.style.fontSize = '10px';
-		// moon_text.style.backgroundColor = 'red';
-		var moon_label = new CSS2DObject(moon_text);
-		moon_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
-		scene.add(moon_label);
+		var sun_text = document.createElement('div');
+		sun_text.className = 'label';
+		sun_text.textContent = categories[i];
+		sun_text.style.color = 'black';
+		sun_text.style.fontSize = '10px';
+		// sun_text.style.backgroundColor = 'red';
+		var sun_label = new CSS2DObject(sun_text);
+		sun_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
+		scene.add(sun_label);
 
-		// 
 		const sphere1 = new THREE.SphereGeometry(2, 16, 8);
 		const sphere2 = new THREE.SphereGeometry(2, 16, 8);
 
@@ -253,40 +209,18 @@ function handleData2(response_data) {
 		scene.add( light1 );
 		scene.add( light2 );
 	}
-}
 
-fetch("http://localhost:8000/repo-category")
-.then((response) => {
-	if (!response.ok) {
-		throw new Error('Network response was not ok');
-	}
-	return response.json();
-})
-.then((data) => {
-	handleData3(data);
-})
-.catch((error) => {
-	console.error('There has been a problem with your fetch operation:', error);
-});
+	let orbitSystem = new THREE.Group();
+	var orbitRadius = 5;
+	var data_repo_category = data["repo-category"];
 
-
-let orbitSystem = new THREE.Group();
-
-function handleData3(response_data) {
-    var orbitRadius = 5;
-
-    //  console.log(response_data);
-    for (var i = 0; i < response_data.length; i++) {
-        var repo = response_data[i].repo;
-        var categories = response_data[i].categories;
+    for (var i = 0; i < data_repo_category.length; i++) {
+        var repo = data_repo_category[i].repo;
+        var categories = data_repo_category[i].categories;
         var points = [];
-
-        if (i != 0) {
-            continue;
-        }
-
+		
         for (var j = 0; j < categories.length; j++) {
-            orbitRadius += Math.random() * 3;
+            orbitRadius += Math.random() * 1;
             var category = categories[j];
 
             var repo_position, category_position;
@@ -301,9 +235,10 @@ function handleData3(response_data) {
             var angleOffset = Math.random() * Math.PI * 2;
             // 각 카테고리마다 다른 기울기 적용
             var tiltAngle = Math.random() * Math.PI * 2; // 최대 30도 기울기
-
-            for (var index = 0; index < 100; index++) {
-                var angle = (index * Math.PI * 2 / 100) + angleOffset;
+			
+			const detail= 20
+            for (var index = 0; index < detail; index++) {
+                var angle = (index * Math.PI * 2 / detail) + angleOffset;
                 var x = Math.cos(angle) * orbitRadius;
                 var z = Math.sin(angle) * orbitRadius;
 
@@ -326,51 +261,77 @@ function handleData3(response_data) {
         // Catmull-Rom Curve 생성
         var curve = new THREE.CatmullRomCurve3(points, true);
 
+        var repoObject = {
+            name: repo,
+            curve: curve,
+            parameter: 0, // curve 상의 현재 위치 (0 ~ 1)
+            mesh: null // 이 repo를 표현할 3D 객체
+        };
+
+		// repo를 표현할 3D 객체 생성
+		var moonGeometry = new THREE.SphereGeometry(1, 32, 16);
+		var moonMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+		repoObject.mesh = new THREE.Mesh(moonGeometry, moonMaterial);
+		scene.add(repoObject.mesh);
+
+		repoObjects.push(repoObject);
+
         // 점들로부터 geometry 생성
         var curvePoints = curve.getPoints(100);
         var geometry = new THREE.BufferGeometry().setFromPoints(curvePoints);
 
-        // Line material 생성
-        var material = new THREE.LineBasicMaterial({ color: 0xbdb3db, transparent: true, opacity: 0.5 });
+        // // Line material 생성
+        var material = new THREE.LineBasicMaterial({ 
+				color: 0xffffff, 
+				transparent: true, 
+				opacity: 0, 
+				visible: false 
+			});
         var curveObject = new THREE.Line(geometry, material);
 
         // orbitSystem에 추가
         orbitSystem.add(curveObject);
     }
-    scene.add(orbitSystem);
+	
+	scene.add(orbitSystem);
 }
 
 
+function updateRepos() {
+    repoObjects.forEach(repo => {
+        repo.parameter = (repo.parameter + 0.0002) % 1; // 속도 조절 가능
+        var position = repo.curve.getPointAt(repo.parameter);
+        repo.mesh.position.copy(position);
+    });
+}
+
 function onMouseClick(event) {
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-	raycaster.setFromCamera(mouse, camera);
-	const intersects = raycaster.intersectObjects(planets);
-	if (intersects.length > 0) {
-		const target = intersects[0].object.position;
-		cameraControls.moveTo(target.x, target.y, target.z, true);
-	}
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planets);
+    if (intersects.length > 0) {
+        const target = intersects[0].object.position;
+        cameraControls.moveTo(target.x, target.y, target.z, true);
+    }
 }
 
 renderer.domElement.addEventListener('click', onMouseClick, false);
-renderer.render( scene, camera );
 
-( function anim () {
-	const time = performance.now() * 0.001;
-	const delta = clock.getDelta();
-	const elapsed = clock.getElapsedTime();
-	const updated = cameraControls.update( delta );
-	
-	requestAnimationFrame( anim );
+function animate() {
+    const delta = clock.getDelta();
 
-	if ( updated ) {
-		renderer.render( scene, camera );
-		labelRenderer.render( scene, camera );  
-		console.log( 'rendered' );
-		
-	}
-	
-} )();
+    const updated = cameraControls.update(delta);
+
+    updateRepos();
+
+    renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
+
+    requestAnimationFrame(animate);
+}
+
+animate();
 
 function customFitTo() {
 
