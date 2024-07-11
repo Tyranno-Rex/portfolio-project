@@ -42,40 +42,30 @@ class FASTAPI_SERVER:
         self.repo_category = self.portfoilo['repo-category']
         # FastAPI 라우터 설정
         self.router = APIRouter()
-        self.router.add_api_route('/test', endpoint=self.get_all_repo_readme, methods=['GET'])
-        self.router.add_api_route('/repos', endpoint=self.get_all_repos, methods=['GET'])
-        self.router.add_api_route('/categories', endpoint=self.get_all_categories, methods=['GET'])
-        self.router.add_api_route('/repo-category', endpoint=self.get_repo_category, methods=['GET'])
+        self.router.add_api_route('/readme', endpoint=self.get_all_repo_readme, methods=['GET'])
+        self.router.add_api_route('/repo-category', endpoint=self.get_all_repo_category, methods=['GET'])
         self.app.include_router(self.router)
         # GitHub API 토큰
-        self.token = open("C:/Users/jsilv/project/portfolio-project/back-end/database-server/api/database/git-token.txt", "r").read().strip()
+        self.token = open("C:/Users/admin/project/portfolio-project/back-end/database-server/api/database/git-token.txt", "r").read().strip()
 
     def get_all_repo_readme(self):
         repo_all_list = readme.get_all_repos(self.token)
         repo_all_list = readme.get_readme(repo_all_list, self.OWNER_NAME, self.token)
         return repo_all_list
     
-    def get_all_repos(self):
+    def get_all_repo_category(self):
         repos = self.repos.find()
-        json_repos = []
-        for repo in repos:
-            json_repos.append({'repo': repo['repo'], 'position': repo['position']})
-        return json_repos
-    
-    def get_all_categories(self):
         categories = self.categories.find()
-        json_categories = []
-        for category in categories:
-            json_categories.append({'category': category['category'], 'position': category['position']})
-        return json_categories
-        
-    def get_repo_category(self):
         repo_category = self.repo_category.find()
-        json_repo_category = []
+        json_repo_category = {'repos': [], 'categories': [], 'repo-category': []}
+        
+        for repo in repos:
+            json_repo_category['repos'].append({'repo': repo['repo'], 'position': repo['position']})
+        for category in categories:
+            json_repo_category['categories'].append({'category': category['category'], 'position': category['position']})
         for rc in repo_category:
-            json_repo_category.append({'repo': rc['repo'], 'categories': rc['categories']})
+            json_repo_category['repo-category'].append({'repo': rc['repo'], 'categories': rc['categories']})
         return json_repo_category
-
 
 if __name__ == "__main__":
     fastapi_server = FASTAPI_SERVER()

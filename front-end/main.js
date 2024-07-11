@@ -1,45 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<title>STAR ROAD</title>
-<link rel="stylesheet" href="./style.css">
-<style>
-    body { margin: 0; }
-    .label {
-		position: absolute;
-		color: black;
-		background-color: white;
-		font-size: 20px;
-		padding: 2px;
-		border-radius: 5px;
-    }
-	canvas {
-		cursor: grab;
-	}
-	canvas.-dragging {
-		cursor: grabbing;
-	}
-	canvas.-moving {
-		cursor: move;
-	}
-	canvas.-zoomIn {
-		cursor: zoom-in;
-	}
-</style>
-</head>
-<body>
-<script async src="https://unpkg.com/es-module-shims@1.8.2/dist/es-module-shims.js"></script>
-<script type="importmap">
-{
-	"imports": {
-		"three": "https://unpkg.com/three@0.161.0/build/three.module.js",
-		"three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
-	}
-}
-</script>
-<script type="module">
 import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import * as holdEvent from "https://unpkg.com/hold-event@0.2.0/dist/hold-event.module.js";
@@ -138,7 +96,7 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-fetch("http://localhost:8000/repo-category")
+fetch("http://192.168.3.3:8000/repo-category")
 .then((response) => {
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
@@ -220,7 +178,7 @@ function makeStarRoad(data) {
         var points = [];
 		
         for (var j = 0; j < categories.length; j++) {
-            orbitRadius += Math.random() * 1;
+            orbitRadius += Math.random();
             var category = categories[j];
 
             var repo_position, category_position;
@@ -265,7 +223,7 @@ function makeStarRoad(data) {
             name: repo,
             curve: curve,
             parameter: 0, // curve 상의 현재 위치 (0 ~ 1)
-            mesh: null // 이 repo를 표현할 3D 객체
+            // mesh: null // 이 repo를 표현할 3D 객체
         };
 
 		// repo를 표현할 3D 객체 생성
@@ -352,7 +310,3 @@ globalThis.CameraControls = CameraControls;
 globalThis.camera = camera;
 globalThis.cameraControls = cameraControls;
 globalThis.customFitTo = customFitTo;
-</script>
-
-</body>
-</html>
