@@ -1,15 +1,14 @@
-
-
-import base64
-from requests import get
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
+# import library
+import uvicorn
 from fastapi import FastAPI, APIRouter
 from starlette.middleware.cors import CORSMiddleware
-import uvicorn
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+import uvicorn.config
 
-#import file
+#import module
 from module import get_readme_gitapi as readme
+from module import logging as log
 
 class FASTAPI_SERVER:
     def __init__(self):
@@ -40,13 +39,20 @@ class FASTAPI_SERVER:
         self.repos = self.portfoilo['repo-positions']
         self.categories = self.portfoilo['category-positions']
         self.repo_category = self.portfoilo['repo-category']
+
+        # FastAPI 이벤트 설정
+        self.app.add_event_handler("startup", self.startup_event)
+        
         # FastAPI 라우터 설정
         self.router = APIRouter()
         self.router.add_api_route('/readme', endpoint=self.get_all_repo_readme, methods=['GET'])
         self.router.add_api_route('/repo-category', endpoint=self.get_all_repo_category, methods=['GET'])
         self.app.include_router(self.router)
         # GitHub API 토큰
-        self.token = open("C:/Users/admin/project/portfolio-project/back-end/database-server/api/database/git-token.txt", "r").read().strip()
+        self.token = open("C:/Users/admin/project/portfolio-project/back-end/database/private/git-token.txt", "r").read().strip()
+
+    async def startup_event(self):
+        log.access_log()
 
     def get_all_repo_readme(self):
         repo_all_list = readme.get_all_repos(self.token)

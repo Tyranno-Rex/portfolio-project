@@ -31,7 +31,7 @@ def decode_base64(content):
 # 2. 각 repository의 README.md를 가져온다.
 def get_readme(repo_all_list, OWNER_NAME, token):
     for repo in repo_all_list:
-        if repo["name"] not in ["BE-study", "portfolio-project"]:
+        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course"]:
             continue
         
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
@@ -69,6 +69,7 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             
             if multi == 'TRUE':
                 for sub_project in project_subproject:
+                    print(repo['name'], sub_project)
                     subproject_readme = get_subproject_readme(repo, sub_project, OWNER_NAME, token)
                     repo_all_list.append(subproject_readme)
         else:
@@ -77,6 +78,7 @@ def get_readme(repo_all_list, OWNER_NAME, token):
 
 # 3. 각 repository에서 세부 파일에서 readme가 있는 경우 가져온다.
 def get_subproject_readme(repo, subproject, OWNER_NAME, token):
+    # print("test: ", /
     url_sub_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/contents/{subproject}"
     headers_sub_readme = {
         "Accept": "application/vnd.github+json",
@@ -85,6 +87,7 @@ def get_subproject_readme(repo, subproject, OWNER_NAME, token):
     }
     response_sub_readme = get(url_sub_readme, headers=headers_sub_readme)
     json_sub_readme = response_sub_readme.json()
+
     for json in json_sub_readme:
         if (json["name"] == "README.md"):
             url_sub_readme = json["download_url"]

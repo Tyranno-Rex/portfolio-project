@@ -59,7 +59,7 @@ eKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0, -
 
 
 
-var starQty = 10000;
+var starQty = 500;
 var starGemoetry = new THREE.BufferGeometry();
 var startPositions = new Float32Array(starQty * 3);
 
@@ -137,6 +137,10 @@ function makeStarRoad(data) {
 		});
 
 		var sun_sphere = new THREE.Mesh(sun_geometry, sun_material);
+		// var random_pos_x = Math.random() * 30 - 15;
+		// var random_pos_y = Math.random() * 30 - 15;
+		// var random_pos_z = Math.random() * 30 - 15;
+		// positions[i] = [random_pos_x, random_pos_y, random_pos_z];
 
 		sun_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
 		scene.add(sun_sphere);
@@ -148,7 +152,7 @@ function makeStarRoad(data) {
 		sun_text.className = 'label';
 		sun_text.textContent = categories[i];
 		sun_text.style.color = 'black';
-		sun_text.style.fontSize = '10px';
+		sun_text.style.fontSize = '14px';
 		// sun_text.style.backgroundColor = 'red';
 		var sun_label = new CSS2DObject(sun_text);
 		sun_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
@@ -192,7 +196,7 @@ function makeStarRoad(data) {
             // 각 카테고리마다 다른 각도 오프셋 적용
             var angleOffset = Math.random() * Math.PI * 2;
             // 각 카테고리마다 다른 기울기 적용
-            var tiltAngle = Math.random() * Math.PI * 2; // 최대 30도 기울기
+            var tiltAngle = Math.random() * Math.PI * 2;
 			
 			const detail= 20
             for (var index = 0; index < detail; index++) {
@@ -218,12 +222,13 @@ function makeStarRoad(data) {
 
         // Catmull-Rom Curve 생성
         var curve = new THREE.CatmullRomCurve3(points, true);
+		var material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 1 });
 
         var repoObject = {
             name: repo,
             curve: curve,
             parameter: 0, // curve 상의 현재 위치 (0 ~ 1)
-            // mesh: null // 이 repo를 표현할 3D 객체
+            mesh: material
         };
 
 		// repo를 표현할 3D 객체 생성
@@ -241,8 +246,8 @@ function makeStarRoad(data) {
         // // Line material 생성
         var material = new THREE.LineBasicMaterial({ 
 				color: 0xffffff, 
-				transparent: true, 
-				opacity: 0, 
+				// transparent: true, 
+				// opacity: 0.3, 
 				visible: false 
 			});
         var curveObject = new THREE.Line(geometry, material);
