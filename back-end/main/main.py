@@ -9,8 +9,10 @@ import uvicorn.config
 #import module
 from module import get_readme_gitapi as readme
 from module import logging as log
+from module import generate_db as gdb
 
 class FASTAPI_SERVER:
+    
     def __init__(self):
         self.OWNER_NAME = "Tyranno-Rex"
 
@@ -25,7 +27,8 @@ class FASTAPI_SERVER:
         )
 
         # MongoDB 연결
-        self.client = MongoClient('localhost', 27017)
+        self.client = MongoClient('mongodb://root:1234@mongodb-container/')
+        # self.client = MongoClient('192.168.3.3', 27018)
         try:
             self.client.admin.command('ismaster')
             print('Connected to MongoDB')
@@ -47,9 +50,14 @@ class FASTAPI_SERVER:
         self.router = APIRouter()
         self.router.add_api_route('/readme', endpoint=self.get_all_repo_readme, methods=['GET'])
         self.router.add_api_route('/repo-category', endpoint=self.get_all_repo_category, methods=['GET'])
+        self.router.add_api_route('/generate-database', endpoint=self.generate_database, methods=['GET'])
         self.app.include_router(self.router)
+        
         # GitHub API 토큰
-        self.token = open("C:/Users/admin/project/portfolio-project/back-end/database/private/git-token.txt", "r").read().strip()
+        import os
+        print(os.getcwd())
+        # self.token = open("./main/git-token", "r").read().strip()
+        # self.token = """
 
     async def startup_event(self):
         log.access_log()
@@ -72,8 +80,13 @@ class FASTAPI_SERVER:
         for rc in repo_category:
             json_repo_category['repo-category'].append({'repo': rc['repo'], 'categories': rc['categories']})
         return json_repo_category
+    
+    def generate_database(self):
+        gdb.generate_database()
+        return {"status": "success"}
+
+fastapi_server = FASTAPI_SERVER()
+app = fastapi_server.app
 
 if __name__ == "__main__":
-    fastapi_server = FASTAPI_SERVER()
-    uvicorn.run(fastapi_server.app, host="0.0.0.0", port=8000)
-    pass
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -34,7 +34,7 @@ def crawling(github_id):
 
     print(repos[1]["name"])
     
-    client = MongoClient('localhost', 27017)
+    client = MongoClient('192.168.3.3', 27018)
     try:
         # 연결 테스트
         client.admin.command('ismaster')

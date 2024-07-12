@@ -96,7 +96,7 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-fetch("http://192.168.3.3:8000/repo-category")
+fetch("http://43.202.167.77:8000/repo-category")
 .then((response) => {
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
@@ -133,7 +133,7 @@ function makeStarRoad(data) {
 			emissive: color1, // 발광 색상 설정
 			emissiveIntensity: 5, // 발광 강도 설정
 			transparent: true, // 투명하게 설정
-			opacity: 0.8 // 투명도 설정 (0은 완전 투명, 1은 완전 불투명)
+			opacity: 0.5 // 투명도 설정 (0은 완전 투명, 1은 완전 불투명)
 		});
 
 		var sun_sphere = new THREE.Mesh(sun_geometry, sun_material);
@@ -315,3 +315,35 @@ globalThis.CameraControls = CameraControls;
 globalThis.camera = camera;
 globalThis.cameraControls = cameraControls;
 globalThis.customFitTo = customFitTo;
+
+
+
+/**
+핵심 코어 기능
+1. library는 THREE.js (3D 라이브러리), CSS2DRenderer (2D 렌더러), hold-event (키보드 이벤트), camera-controls (카메라 컨트롤러)를 사용한다
+
+2. 3D 랜더링을 필요한 필수 요소 : Scene, Camera, Renderer
+	2-1. Scene : 3D 공간을 의미하며, 모든 객체들이 포함되는 공간이다
+	2-2. Camera : 사용자가 보는 시점을 의미하며, 여러 종류가 있다. 여기서는 PerspectiveCamera를 사용한다
+	2-3. Renderer : Scene과 Camera를 렌더링하여 화면에 표시하는 역할을 한다
+
+3. 물체 생성
+	3-1. SphereGeometry : 구체를 생성하는 객체이며, radius, widthSegments, heightSegments를 인자로 받는다
+	3-2. MeshStandardMaterial : 물체의 속성을 정의하는 객체이며, color, emissive, emissiveIntensity, transparent, opacity를 인자로 받는다
+	3-3. Mesh : 물체를 생성하는 객체이며, geometry, material를 인자로 받는다
+
+4. WebGL Pipeline
+	4-1. [Input geometry + Attributes]
+	4-2. Memory (: Gemotry, Buffer, Texture 등이 저장되는 공간)
+	4-3. JavaScript (: GPU에 전달되는 공간)
+	4-3. Vertex Shader (: Vertex의 위치를 계산하는 공간)
+	4-4. Primitive Assembly[= Triangle Assembly] (: Vertex를 삼각형으로 변환하는 공간)
+	4-5. Rasterization (: 삼각형을 화면에 표시하는 공간)
+	4-6. Fragment Shader (: 픽셀의 색상을 계산하는 공간)
+	4-7. Fragment Operation (: 픽셀의 색상을 조작하는 공간)
+	4-8. Frame Buffer (: 화면에 표시되는 공간)
+
+
+
+
+**/ 

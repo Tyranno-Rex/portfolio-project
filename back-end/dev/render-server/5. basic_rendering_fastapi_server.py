@@ -26,7 +26,7 @@ class FASTAPI_SERVER:
         return {"message": "Hello World"}
 
     def get_db(self):
-        client = MongoClient('localhost', 27017)
+        client = MongoClient('192.168.3.3', 27018)
         db = client['portfolio']
         repos = db['repo-positions']
         categories = db['category-positions']

@@ -170,52 +170,54 @@ def find_optimal_location(categories, weights):
     result = minimize(weighted_distance, initial_guess, args=(categories, weights), method='L-BFGS-B')
     return result.x
 
-# 레포지토리 별 최적의 위치 계산
-repo_optimal_locations = {}
-for repo, categories in repos.items():
-    if isinstance(categories, dict):
-        repo_optimal_locations[repo] = {}
-        for sub_repo, sub_categories in categories.items():
-            weights = category_weights[sub_repo]
-            optimal_location = find_optimal_location(sub_categories, weights)
-            repo_optimal_locations[repo][sub_repo] = optimal_location
-    else:
-        weights = category_weights[repo]
-        optimal_location = find_optimal_location(categories, weights)
-        repo_optimal_locations[repo] = optimal_location
+def generate_database():
+    # 레포지토리 별 최적의 위치 계산
+    repo_optimal_locations = {}
+    for repo, categories in repos.items():
+        if isinstance(categories, dict):
+            repo_optimal_locations[repo] = {}
+            for sub_repo, sub_categories in categories.items():
+                weights = category_weights[sub_repo]
+                optimal_location = find_optimal_location(sub_categories, weights)
+                repo_optimal_locations[repo][sub_repo] = optimal_location
+        else:
+            weights = category_weights[repo]
+            optimal_location = find_optimal_location(categories, weights)
+            repo_optimal_locations[repo] = optimal_location
 
-client = MongoClient('192.168.3.3', 27018)
+    # client = MongoClient('192.168.3.3', 27018)
+    client = MongoClient('mongodb://root:1234@mongodb-container/')
 
-try:
-    # 연결 테스트
-    client.admin.command('ismaster')
-    db = client['github']
-    print('Connected to MongoDB')
-except ConnectionFailure:
-    print('MongoDB server not available')
+    try:
+        # 연결 테스트
+        client.admin.command('ismaster')
+        db = client['github']
+        print('Connected to MongoDB')
+    except ConnectionFailure:
+        print('MongoDB server not available')
 
-db = client['portfolio']
-collection  = db['repo-positions']
-collection2 = db['category-positions']
-collection3 = db['repo-category']
-col = db['repo-category']
+    db = client['portfolio']
+    collection  = db['repo-positions']
+    collection2 = db['category-positions']
+    collection3 = db['repo-category']
+    col = db['repo-category']
 
 
-# 레포지토리 위치 저장
-for repo, position in repo_optimal_locations.items():
-    if isinstance(position, dict):
-        for sub_repo, sub_position in position.items():
-            collection.insert_one({'repo': f'{repo}/{sub_repo}', 'position': sub_position.tolist()})
-    else:
-        collection.insert_one({'repo': repo, 'position': position.tolist()})
+    # 레포지토리 위치 저장
+    for repo, position in repo_optimal_locations.items():
+        if isinstance(position, dict):
+            for sub_repo, sub_position in position.items():
+                collection.insert_one({'repo': f'{repo}/{sub_repo}', 'position': sub_position.tolist()})
+        else:
+            collection.insert_one({'repo': repo, 'position': position.tolist()})
 
-for category, coord in category_coords.items():
-    collection2.insert_one({'category': category, 'position': coord.tolist()})
-    
+    for category, coord in category_coords.items():
+        collection2.insert_one({'category': category, 'position': coord.tolist()})
+        
 
-for repo, categories in repos.items():
-    if isinstance(categories, dict):
-        for sub_repo, sub_categories in categories.items():
-            collection3.insert_one({'repo': f'{repo}/{sub_repo}', 'categories': sub_categories})
-    else:
-        collection3.insert_one({'repo': repo, 'categories': categories})
+    for repo, categories in repos.items():
+        if isinstance(categories, dict):
+            for sub_repo, sub_categories in categories.items():
+                collection3.insert_one({'repo': f'{repo}/{sub_repo}', 'categories': sub_categories})
+        else:
+            collection3.insert_one({'repo': repo, 'categories': categories})

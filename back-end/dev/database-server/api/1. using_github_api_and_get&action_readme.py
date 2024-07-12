@@ -2,7 +2,7 @@ from requests import get
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
-# client = MongoClient('localhost', 27017)
+# client = MongoClient('192.168.3.3', 27018)
 
 OWNER_NAE = "Tyranno-Rex"
 # try:

@@ -223,7 +223,7 @@ def make_new_category_coords():
     new_category_coords["algorithm"] = np.array([2, -6, 0])
     return new_category_coords
 
-client = MongoClient('localhost', 27017)
+client = MongoClient('192.168.3.3', 27018)
 
 try:
     # 연결 테스트

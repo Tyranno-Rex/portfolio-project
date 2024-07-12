@@ -22,7 +22,7 @@ class FASTAPI_SERVER:
             allow_headers=["*"],
         )
 
-        self.client = MongoClient('localhost', 27017)
+        self.client = MongoClient('192.168.3.3', 27018)
         try:
             # 연결 테스트
             self.client.admin.command('ismaster')

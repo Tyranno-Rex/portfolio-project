@@ -11,7 +11,8 @@ def save_log_to_mongodb(log_message):
             "timestamp": datetime.datetime.now(),
             "message": log_message
         }
-        client = MongoClient('localhost', 27017)
+        client = MongoClient('mongodb://root:1234@mongodb-container/')
+        # client = MongoClient('192.168.3.3', 27018)
         log_db = client['log']
         log = log_db[today]
         log.insert_one(log_entry)
@@ -24,8 +25,8 @@ def access_log():
     console_formatter = uvicorn.logging.ColourizedFormatter("{asctime} - {message}", style="{", use_colors=True)
     
     # 파일 핸들러
-    file_handler = logging.handlers.TimedRotatingFileHandler("C:/Users/admin/project/portfolio-project/back-end/database/log/debug.log", when='midnight', interval=1, backupCount=1)
-    file_handler.setFormatter(console_formatter)
+    # file_handler = logging.handlers.TimedRotatingFileHandler("./database", when='midnight', interval=1, backupCount=1)
+    # file_handler.setFormatter(console_formatter)
     
     # MongoDB 핸들러
     class MongoDBHandler(logging.Handler):
@@ -36,5 +37,5 @@ def access_log():
     mongodb_handler = MongoDBHandler()
     mongodb_handler.setFormatter(console_formatter)
 
-    logger.addHandler(file_handler)
+    # logger.addHandler(file_handler)
     logger.addHandler(mongodb_handler)

@@ -20,7 +20,7 @@ class FASTAPI_CRON_SERVER:
             allow_headers=["*"],
         )
 
-        self.client = MongoClient('localhost', 27017)
+        self.client = MongoClient('192.168.3.3', 27018)
         self.git_repo_mongodb = self.client['github_repo']
         self.router = APIRouter()
         self.router.add_api_route('/crawling', endpoint=self.crawling_main, methods=['GET'])
