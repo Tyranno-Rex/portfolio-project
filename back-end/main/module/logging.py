@@ -11,8 +11,19 @@ def save_log_to_mongodb(log_message):
             "timestamp": datetime.datetime.now(),
             "message": log_message
         }
-        client = MongoClient('mongodb://root:1234@mongodb-container/')
-        # client = MongoClient('192.168.3.3', 27018)
+        # if 
+        # client = MongoClient('mongodb://root:1234@mongodb-container/')
+                # 운영 체제를 확인하여 디버그 모드와 릴리즈 모드를 설정합니다.
+        import platform
+        
+        current_os = platform.system()
+        client = None
+        if current_os == 'Windows':
+            client = MongoClient('localhost', 27017)
+        elif current_os == 'Linux':
+            client = MongoClient('mongodb://root:1234@mongodb-container/')
+        else:
+            print("OS not supported")
         log_db = client['log']
         log = log_db[today]
         log.insert_one(log_entry)

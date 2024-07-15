@@ -10,7 +10,7 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 1000);
 
-camera.position.set( 0, 0, 10 );
+camera.position.set(30, 0, 50);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );
@@ -26,7 +26,7 @@ const cameraControls = new CameraControls( camera, renderer.domElement );
 cameraControls.minDistance = cameraControls.maxDistance = 1;
 cameraControls.azimuthRotateSpeed = - 0.3; // negative value to invert rotation direction
 cameraControls.polarRotateSpeed   = - 0.3; // negative value to invert rotation direction
-cameraControls.truckSpeed = 10;
+cameraControls.truckSpeed = 1;
 cameraControls.mouseButtons.wheel = CameraControls.ACTION.ZOOM;
 cameraControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
 cameraControls.mouseButtons.right = CameraControls.ACTION.TRUCK;

@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import minimize
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-
+import platform
 
 # 카테고리 좌표
 category_coords = {
@@ -170,7 +170,7 @@ def find_optimal_location(categories, weights):
     result = minimize(weighted_distance, initial_guess, args=(categories, weights), method='L-BFGS-B')
     return result.x
 
-def generate_database():
+def generate_database(uvicorn_log_level):
     # 레포지토리 별 최적의 위치 계산
     repo_optimal_locations = {}
     for repo, categories in repos.items():
@@ -185,8 +185,15 @@ def generate_database():
             optimal_location = find_optimal_location(categories, weights)
             repo_optimal_locations[repo] = optimal_location
 
-    # client = MongoClient('192.168.3.3', 27018)
-    client = MongoClient('mongodb://root:1234@mongodb-container/')
+    
+    current_os = platform.system()
+    client = None
+    if current_os == 'Windows':
+        client = MongoClient('localhost', 27017)
+    elif current_os == 'Linux':
+        client = MongoClient('mongodb://root:1234@mongodb-container/')
+    else:
+        print("OS not supported")
 
     try:
         # 연결 테스트

@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 import uvicorn.config
+import platform
 
 #import module
 from module import get_readme_gitapi as readme
@@ -27,8 +28,24 @@ class FASTAPI_SERVER:
         )
 
         # MongoDB 연결
-        self.client = MongoClient('mongodb://root:1234@mongodb-container/')
-        # self.client = MongoClient('192.168.3.3', 27018)
+        # RELEASE: mongodb://root:1234@mongodb-container/
+        # DEBUG: localhost:27017
+
+        # 운영 체제를 확인하여 디버그 모드와 릴리즈 모드를 설정합니다.
+        current_os = platform.system()
+        print("=====================================")
+        print("OS: ", current_os)
+        if current_os == 'Windows':
+            print("DEBUG")
+            self.client = MongoClient('localhost', 27017)
+        elif current_os == 'Linux':
+            print("RELEASE")
+            self.client = MongoClient('mongodb://root:1234@mongodb-container/')
+        else:
+            print("OS not supported")
+            exit(1)
+        print("=====================================")
+        print("MongoDB Connection")
         try:
             self.client.admin.command('ismaster')
             print('Connected to MongoDB')
@@ -36,7 +53,8 @@ class FASTAPI_SERVER:
             print('MongoDB server not available')
         # readme 데이터베이스
         self.git_repo_mongodb = self.client['github_repo']
-        
+        print("=====================================")
+
         # portfolio 데이터베이스
         self.portfoilo = self.client['portfolio']
         self.repos = self.portfoilo['repo-positions']
@@ -53,11 +71,23 @@ class FASTAPI_SERVER:
         self.router.add_api_route('/generate-database', endpoint=self.generate_database, methods=['GET'])
         self.app.include_router(self.router)
         
+        print("=====================================")
         # GitHub API 토큰
         import os
-        print(os.getcwd())
-        # self.token = open("./main/git-token", "r").read().strip()
-        # self.token = """
+        print("project path: ", os.getcwd())
+        
+        if current_os == "Windows":
+            # Windows의 ./back-end/main/git-token.txt 파일을 읽는다.
+            print("DEBUG")
+            self.token = open("./back-end/main/git-token.txt", "r").read().strip()
+        else:
+            print("RELEASE")
+            # ubuntu의 /home/ubuntu/git-token 파일을 읽는다.
+            try:
+                self.token = open('/home/ubuntu/git-token.txt', 'r').read().strip()
+            except FileNotFoundError:
+                self.token = "null"
+        print("=====================================")
 
     async def startup_event(self):
         log.access_log()
@@ -82,7 +112,7 @@ class FASTAPI_SERVER:
         return json_repo_category
     
     def generate_database(self):
-        gdb.generate_database()
+        gdb.generate_database(uvicorn.config.LOG_LEVEL)
         return {"status": "success"}
 
 fastapi_server = FASTAPI_SERVER()
