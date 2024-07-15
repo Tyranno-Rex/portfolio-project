@@ -83,6 +83,7 @@ class FASTAPI_SERVER:
                 self.token = open('/app/git-token.txt', 'r').read().strip()
             except FileNotFoundError:
                 self.token = "null"
+        print("Token: ", self.token)
         print("=====================================")
 
 
