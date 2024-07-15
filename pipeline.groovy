@@ -92,7 +92,9 @@ pipeline {
         stage('Docker Run') {
             steps {
                 sh "docker run -d --network docker-network -p 8000:8000 --name front-container backend-image-docker"
-                sh "docker run -d --network docker-network -p 19999:80 --name back-container frontend-image-docker"
+                sh "docker run -d --network docker-network -v /home/ubuntu/git-token.txt:/app/git-token.txt -p 19999:80 --name back-container frontend-image-docker"
+                // docker run -it --name my_container -v /home/ubuntu/git-token.txt:/app/git-token.txt my_python_image
+                // sh "docker run -d --network docker-network -p 19999:80 --name back-container frontend-image-docker"
             }
         }
     }

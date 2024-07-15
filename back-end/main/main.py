@@ -72,22 +72,19 @@ class FASTAPI_SERVER:
         self.app.include_router(self.router)
         
         print("=====================================")
-        # GitHub API 토큰
-        import os
-        print("project path: ", os.getcwd())
-        
-        if current_os == "Windows":
+        if current_os == 'Windows':
             # Windows의 ./back-end/main/git-token.txt 파일을 읽는다.
             print("DEBUG")
             self.token = open("./back-end/main/git-token.txt", "r").read().strip()
         else:
             print("RELEASE")
-            # ubuntu의 /home/ubuntu/git-token 파일을 읽는다.
+            # 컨테이너 내의 /app/git-token.txt 파일을 읽는다.
             try:
-                self.token = open('/home/ubuntu/git-token.txt', 'r').read().strip()
+                self.token = open('/app/git-token.txt', 'r').read().strip()
             except FileNotFoundError:
                 self.token = "null"
         print("=====================================")
+
 
     async def startup_event(self):
         log.access_log()
