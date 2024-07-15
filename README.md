@@ -1,6 +1,3 @@
-add readme to check conntection with jira
-
-
 ## Project Crawling
 
 PROJECT_NAME : portfolio-project
