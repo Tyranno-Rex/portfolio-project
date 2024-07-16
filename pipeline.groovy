@@ -1,3 +1,9 @@
+// ------------------------------------------------------------------------ //
+// This is the Jenkins pipeline script that will be used to build the       //
+// Docker images and run the containers.                                    //
+// The pipeline will be triggered by a webhook from the GitHub repository.  //
+// ------------------------------------------------------------------------ //
+
 pipeline {
     agent any
     stages {

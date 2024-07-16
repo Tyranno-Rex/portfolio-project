@@ -11,6 +11,7 @@ import platform
 from module import get_readme_gitapi as readme
 from module import logging as log
 from module import generate_db as gdb
+from module import save_repo_data_in_mongo as saveInMongo
 
 class FASTAPI_SERVER:
     
@@ -32,13 +33,13 @@ class FASTAPI_SERVER:
         # DEBUG: localhost:27017
 
         # 운영 체제를 확인하여 디버그 모드와 릴리즈 모드를 설정합니다.
-        current_os = platform.system()
+        self.current_os = platform.system()
         print("=====================================")
-        print("OS: ", current_os)
-        if current_os == 'Windows':
+        print("OS: ", self.current_os)
+        if self.current_os == 'Windows':
             print("DEBUG")
             self.client = MongoClient('localhost', 27017)
-        elif current_os == 'Linux':
+        elif self.current_os == 'Linux':
             print("RELEASE")
             self.client = MongoClient('mongodb://root:1234@mongodb-container/')
         else:
@@ -72,7 +73,7 @@ class FASTAPI_SERVER:
         self.app.include_router(self.router)
         
         print("=====================================")
-        if current_os == 'Windows':
+        if self.current_os == 'Windows':
             # Windows의 ./back-end/main/git-token.txt 파일을 읽는다.
             print("DEBUG")
             self.token = open("./back-end/main/git-token.txt", "r").read().strip()
@@ -93,6 +94,7 @@ class FASTAPI_SERVER:
     def get_all_repo_readme(self):
         repo_all_list = readme.get_all_repos(self.token)
         repo_all_list = readme.get_readme(repo_all_list, self.OWNER_NAME, self.token)
+        saveInMongo.save_repo_data_in_mongo(repo_all_list, self.current_os)
         return repo_all_list
     
     def get_all_repo_category(self):

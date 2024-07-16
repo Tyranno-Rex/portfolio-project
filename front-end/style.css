@@ -1,3 +1,29 @@
+@font-face {
+	font-family: 'starwars1';
+	src : url('./asset/fonts/starwars1.otf') format('opentype'),
+}
+
+@font-face {
+	font-family: 'starwars2';
+	src : url('./asset/fonts/starwars2.otf') format('opentype'),
+}
+
+@font-face {
+	font-family: 'starwars3';
+	src : url('./asset/fonts/starwars3.otf') format('opentype'),
+}
+
+@font-face {
+	font-family: 'starwars4';
+	src : url('./asset/fonts/starwars4.otf') format('opentype'),
+}
+
+@font-face {
+	font-family: 'starwars5';
+	src : url('./asset/fonts/starwars5.otf') format('opentype'),
+}
+
+
 body {
 	margin: 0;
 }
@@ -10,6 +36,29 @@ canvas {
 	color: #FFF;
 	position: absolute;
 	padding: 20px 0 0 20px;
+	font-size: 25px;
+	font-family: 'starwars3';
+}
+
+.label {
+	position: absolute;
+	background-color: rgba(255, 255, 255, 0);
+	color: #FFF;
+	font-size: 15px;
+	font-family: 'starwars3';
+	font-optical-sizing: auto;
+	font-style: normal;
+}
+
+.title {
+    color: #FFF; /* 텍스트 색상 */
+    position: absolute; /* 절대 위치 지정 */
+    top: 0%; /* 상단 위치를 화면의 중앙에 맞춤 */
+    left: 55%; /* 좌측 위치를 화면의 중앙에 맞춤 */
+    font-size: 40px; /* 폰트 크기 */
+    font-family: starwars4; /* 폰트 패밀리 */
+    /* 추가 부분 */
+    margin-left: -25%; /* 타이틀 너비의 절반만큼 왼쪽으로 이동 */
 }
 
 a {
@@ -18,14 +67,4 @@ a {
 
 label {
 	cursor: pointer;
-}
-
-.ruler {
-	pointer-events: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: url( "./ruler.png" ) no-repeat 0 0;
 }

@@ -10,7 +10,9 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 1000);
 
-camera.position.set(30, 0, 50);
+camera.position.set(80, 15, 0);
+camera.lookAt(new THREE.Vector3(10, 10, 10));
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );
@@ -31,8 +33,12 @@ cameraControls.mouseButtons.wheel = CameraControls.ACTION.ZOOM;
 cameraControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
 cameraControls.mouseButtons.right = CameraControls.ACTION.TRUCK;
 cameraControls.touches.two = CameraControls.ACTION.TOUCH_ZOOM_TRUCK;
+cameraControls.touches.three = CameraControls.ACTION.TOUCH_PAN;
 cameraControls.saveState();
 
+let hoveredLabel = document.createElement('div');
+hoveredLabel.className = 'label';
+document.body.appendChild(hoveredLabel);
 
 const KEYCODE = {
 	W: 87,
@@ -56,8 +62,6 @@ wKey.addEventListener( 'holding', function( event ) { cameraControls.forward(   
 sKey.addEventListener( 'holding', function( event ) { cameraControls.forward( - 0.05 * event.deltaTime, false ) } );
 qKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0,   0.05 * event.deltaTime, false ) } );
 eKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0, - 0.05 * event.deltaTime, false ) } );
-
-
 
 var starQty = 500;
 var starGemoetry = new THREE.BufferGeometry();
@@ -85,7 +89,7 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let planets = [];
 let orbitControls = [];
-
+let repoObjects = [];
 
 function getRandomColor() {
 	var color = "";
@@ -109,8 +113,6 @@ fetch("http://43.202.167.77:8000/repo-category")
 .catch((error) => {
 	console.error('There has been a problem with your fetch operation:', error);
 });
-
-let repoObjects = [];
 
 function makeStarRoad(data) {
 
@@ -143,25 +145,26 @@ function makeStarRoad(data) {
 		// positions[i] = [random_pos_x, random_pos_y, random_pos_z];
 
 		sun_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
+		sun_sphere.name = categories[i];
 		scene.add(sun_sphere);
 		planets.push(sun_sphere);
 		orbitControls.push({"sun": categories[i], "position": positions[i]})
 
 		
-		var sun_text = document.createElement('div');
-		sun_text.className = 'label';
-		sun_text.textContent = categories[i];
-		sun_text.style.color = 'black';
-		sun_text.style.fontSize = '14px';
-		// sun_text.style.backgroundColor = 'red';
-		var sun_label = new CSS2DObject(sun_text);
-		sun_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
-		scene.add(sun_label);
+		// var sun_text = document.createElement('div');
+		// sun_text.className = 'label';
+		// sun_text.textContent = categories[i];
+		// sun_text.style.color = 'black';
+		// sun_text.style.fontSize = '14px';
+		// // sun_text.style.backgroundColor = 'red';
+		// var sun_label = new CSS2DObject(sun_text);
+		// sun_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
+		// scene.add(sun_label);
 
 		const sphere1 = new THREE.SphereGeometry(2, 16, 8);
 		const sphere2 = new THREE.SphereGeometry(2, 16, 8);
 
-		// color를 랜덤한 4개의 값을 넣어준다.
+		// color를 랜덤한 2개의 값을 넣어준다.
 		var light1 = new THREE.PointLight( color1, 1000);
 		var light2 = new THREE.PointLight( color2, 1000);
 		light1.position.set( positions[i][0] * 5 + 0.3, positions[i][1] * 5, positions[i][2] * 5);
@@ -259,7 +262,6 @@ function makeStarRoad(data) {
 	scene.add(orbitSystem);
 }
 
-
 function updateRepos() {
     repoObjects.forEach(repo => {
         repo.parameter = (repo.parameter + 0.0002) % 1; // 속도 조절 가능
@@ -279,25 +281,45 @@ function onMouseClick(event) {
     }
 }
 
+function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    
+    const intersects = raycaster.intersectObjects(planets);
+    if (intersects.length > 0) {
+        const target = intersects[0].object;
+		// console.log(target);
+        const vector = new THREE.Vector3();
+        vector.copy(target.position).project(camera);
+        
+        hoveredLabel.style.top = `${event.clientY - 15}px`;
+		hoveredLabel.style.left = `${event.clientX + 50}px`;
+		hoveredLabel.textContent = target.name;
+		// 사이즈를 조절
+        hoveredLabel.style.display = 'block';
+    } else {
+        hoveredLabel.style.display = 'none';
+    }
+}
+
+
 renderer.domElement.addEventListener('click', onMouseClick, false);
+renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 
 function animate() {
     const delta = clock.getDelta();
-
     const updated = cameraControls.update(delta);
 
     updateRepos();
-
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
-
     requestAnimationFrame(animate);
 }
 
 animate();
 
 function customFitTo() {
-
 	const distanceToFit = cameraControls.getDistanceToFitBox( meshBBWidth, meshBBHeight, meshBBDepth );
 	cameraControls.moveTo(
 		mesh.position.x,
@@ -342,8 +364,5 @@ globalThis.customFitTo = customFitTo;
 	4-6. Fragment Shader (: 픽셀의 색상을 계산하는 공간)
 	4-7. Fragment Operation (: 픽셀의 색상을 조작하는 공간)
 	4-8. Frame Buffer (: 화면에 표시되는 공간)
-
-
-
 
 **/ 

@@ -31,7 +31,7 @@ def decode_base64(content):
 # 2. 각 repository의 README.md를 가져온다.
 def get_readme(repo_all_list, OWNER_NAME, token):
     for repo in repo_all_list:
-        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course"]:
+        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course", "algorithm"]:
             continue
         
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
