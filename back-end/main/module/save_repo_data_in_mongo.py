@@ -16,14 +16,15 @@ def save_repo_data_in_mongo(repo_all_list, current_os):
 
     for repo in repo_all_list:
         past_repo = repos.find_one({"name": repo["name"]})
-        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course", "algorithm"]:
-            continue
         
         if past_repo is None:
             print("Insert: ", repo["name"])
             repo['_id'] = str(ObjectId())
             repos.insert_one(repo)
 
+        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course", "algorithm"]:
+            continue
+        
         past_name = past_repo["name"][0]
         repo_name = repo["name"][0]
         past_url = past_repo["url"][0]
