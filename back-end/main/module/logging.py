@@ -1,21 +1,25 @@
+import platform        
 import datetime
 from pymongo import MongoClient
 import logging
 import uvicorn
+import datetime
+import pytz
 
 def save_log_to_mongodb(log_message):
     try:
         today = datetime.datetime.now().strftime("%Y-%m-%d")
+        utc_now = datetime.datetime.now(datetime.timezone.utc)
+
+        # KST = UTC + 9 hours / korea timezone
+        kst = pytz.timezone('Asia/Seoul')
+        kst_now = utc_now.astimezone(kst)
 
         log_entry = {
-            "timestamp": datetime.datetime.now(),
+            "timestamp": kst_now,
             "message": log_message
         }
-        # if 
-        # client = MongoClient('mongodb://root:1234@mongodb-container/')
-                # 운영 체제를 확인하여 디버그 모드와 릴리즈 모드를 설정합니다.
-        import platform
-        
+
         current_os = platform.system()
         client = None
         if current_os == 'Windows':
@@ -34,10 +38,6 @@ def save_log_to_mongodb(log_message):
 def access_log():
     logger = logging.getLogger('uvicorn.access')
     console_formatter = uvicorn.logging.ColourizedFormatter("{asctime} - {message}", style="{", use_colors=True)
-    
-    # 파일 핸들러
-    # file_handler = logging.handlers.TimedRotatingFileHandler("./database", when='midnight', interval=1, backupCount=1)
-    # file_handler.setFormatter(console_formatter)
     
     # MongoDB 핸들러
     class MongoDBHandler(logging.Handler):
