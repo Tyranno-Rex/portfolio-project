@@ -76,7 +76,7 @@ class FASTAPI_SERVER:
         if self.current_os == 'Windows':
             # Windows의 ./back-end/main/git-token.txt 파일을 읽는다.
             print("DEBUG")
-            self.token = open("./back-end/main/git-token.txt", "r").read().strip()
+            self.token = open("./back-end/main/database/git-token.txt", "r").read().strip()
         else:
             print("RELEASE")
             # 컨테이너 내의 /app/git-token.txt 파일을 읽는다.

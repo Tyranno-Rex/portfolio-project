@@ -8,7 +8,7 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 1000);
+const camera = new THREE.PerspectiveCamera( 60, width / height, 0.01, 600);
 
 camera.position.set(80, 15, 0);
 camera.lookAt(new THREE.Vector3(10, 10, 10));
@@ -40,6 +40,63 @@ let hoveredLabel = document.createElement('div');
 hoveredLabel.className = 'label';
 document.body.appendChild(hoveredLabel);
 
+
+
+const WhenStart = "2022-07-09";
+var start = new Date(WhenStart);
+
+function convertTime(milliseconds) {
+    var seconds = Math.floor(milliseconds / 1000);
+    var years = Math.floor(seconds / (365 * 24 * 3600));
+    seconds -= years * (365 * 24 * 3600);
+    var days = Math.floor(seconds / (24 * 3600));
+    seconds -= days * (24 * 3600);
+    var hours = Math.floor(seconds / 3600);
+    seconds -= hours * 3600;
+    var minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    return {
+        years: years,
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+    };
+}
+
+function updateCreditText() {
+    var today = new Date();
+    var diff = today.getTime() - start.getTime();
+    var convertedTime = convertTime(diff);
+    
+    creditText.innerHTML = 
+		'created by <a href="https://github.com/Tyranno-Rex"\
+		target="_blank" style="color: white;">Tyranno-Rex</a>\
+        <br>contact: jsilvercastle@gmail.com\
+		<br>notion : <a href="https://uttermost-meteoroid-5fa.notion.site/c589ce11b68443e6ab545ad8879a6cc1">JSilverCastle\'s Notion</a>\
+        <br>From my first hello world : \
+        ' + convertedTime.years + ' years ' + convertedTime.days + ' days \
+        ' + convertedTime.hours + ' hours ' + convertedTime.minutes + ' minutes \
+        ' + convertedTime.seconds + ' seconds';
+}
+
+let creditText = document.createElement('div');
+creditText.className = 'credit';
+creditText.style.color = 'white';
+creditText.style.fontSize = '30px';
+creditText.style.pointerEvents = 'auto';
+// creditText.style.zIndex = '1000'; 
+
+let creditLabel1 = new CSS2DObject(creditText);
+creditLabel1.position.set(-1000, 0, 0);
+scene.add(creditLabel1);
+
+labelRenderer.domElement.style.pointerEvents = 'none';
+updateCreditText();
+setInterval(updateCreditText, 1000);
+
+
 const KEYCODE = {
 	W: 87,
 	A: 65,
@@ -63,15 +120,15 @@ sKey.addEventListener( 'holding', function( event ) { cameraControls.forward( - 
 qKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0,   0.05 * event.deltaTime, false ) } );
 eKey.addEventListener( 'holding', function( event ) { cameraControls.truck( 0, - 0.05 * event.deltaTime, false ) } );
 
-var starQty = 500;
+var starQty = 3000;
 var starGemoetry = new THREE.BufferGeometry();
 var startPositions = new Float32Array(starQty * 3);
 
 for (var i = 0; i < starQty; i++) {
 	var i3 = i * 3;
-	startPositions[i3] = (Math.random()*200) - 100;
-	startPositions[i3 + 1] = (Math.random()*200) - 100;
-	startPositions[i3 + 2] = (Math.random()*200) - 100;
+	startPositions[i3] = (Math.random()*2000) - 1000;
+	startPositions[i3 + 1] = (Math.random()*2000) - 1000;
+	startPositions[i3 + 2] = (Math.random()*2000) - 1000;
 }
 
 starGemoetry.setAttribute('position', new THREE.BufferAttribute(startPositions, 3));
@@ -139,9 +196,9 @@ function makeStarRoad(data) {
 		});
 
 		var sun_sphere = new THREE.Mesh(sun_geometry, sun_material);
-		// var random_pos_x = Math.random() * 30 - 15;
-		// var random_pos_y = Math.random() * 30 - 15;
-		// var random_pos_z = Math.random() * 30 - 15;
+		// var random_pos_x = Math.random() * 20 - 10;
+		// var random_pos_y = Math.random() * 20 - 10;
+		// var random_pos_z = Math.random() * 20 - 10;
 		// positions[i] = [random_pos_x, random_pos_y, random_pos_z];
 
 		sun_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
