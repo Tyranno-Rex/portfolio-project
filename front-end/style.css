@@ -84,3 +84,117 @@ a {
 label {
 	cursor: pointer;
 }
+
+
+
+#showChatButton {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    
+    border: none;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+
+    top: calc(100% - 100px);
+    left: calc(100% - 200px);
+
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+
+#showChatButton img {
+    width: 100%; /* 이미지가 버튼을 꽉 채우도록 */
+    height: 100%; /* 이미지가 버튼을 꽉 채우도록 */
+    object-fit: cover; /* 비율 유지하며 잘리도록 */
+}
+
+
+#closeChatButton {
+    position: absolute;
+    right: 15px;
+    top: 5%;
+    transform: translateY(-50%);
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+#closeChatButton:hover {
+    background-color: #d32f2f;
+}
+
+
+.chat-container {
+    position: absolute;
+    width: 400px;
+    height: 500px;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    top: calc(100% - 500px); 
+    right: 0;
+    display: none; 
+}
+
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+    word-wrap: break-word;
+}
+
+.chat-message.user {
+    background-color: #e1ffc7;
+    text-align: right;
+}
+
+
+.chat-input {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #ddd; /* 입력창 위에 선 추가 */
+    background-color: #fff; /* 입력창 배경색 */
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.chat-input button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.chat-input button:hover {
+    background-color: #45a049;
+} 
