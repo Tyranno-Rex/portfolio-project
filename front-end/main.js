@@ -160,7 +160,8 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-fetch("http://43.202.167.77:8000/repo-category")
+// fetch("http://43.202.167.77:8000/repo-category")
+fetch("http://localhost:8000/repo-category")
 .then((response) => {
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
@@ -403,22 +404,31 @@ function onMouseClick(event) {
 			}
 		});
 		
-		// 해당 repo에 대한 간략한 정보를 보여준다. 모달창을 띄워서 보여준다.
-		// Populate and open the modal
-		// fetch(`http://43.202.167.77:8000/get_repo_info?repo=${repo}`)
-		// .then((response) => {
-		// 	if (!response.ok) {
-		// 		throw new Error('Network response was not ok');
-		// 	}
-		// 	return response.json();
-		// })
-		// .then((data) => {
-		// 	document.getElementById('modal-content').innerHTML = `Information about ${repo}<br><br>${data}`;
-		// 	myModal.open('#myModal');
-		// })
-		// .catch((error) => {
-		// 	console.error('There has been a problem with your fetch operation:', error);
-		// });
+		fetch(`http://192.168.3.3:8000/get-repo-info?repo=${repo}`)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then((data) => {
+			console.log(data);
+			document.getElementById('modal-content').innerHTML = `Information about ${repo}<br>${data}`;
+			// {name: 'libft', url: "'https://github.com/Tyranno-Rex/42seoul-course/tree/main/libft'", readme: "```markdown\n# Libft\n\nLibft is a custom implementat…tion.so/0-libft-5eac5697c9f340a28a47601182c109cb'", description: 'A custom implementation of standard C library func…nd create a reusable library for future projects.', complete_status: 'TRUE', …}
+			var get_name = data.name;
+			var get_url = data.url;
+			var get_readme = data.readme;
+			var get_description = data.description;
+			var get_complete_status = data.complete_status;
+			var get_multi = data.multi;
+			var get_subproject = data.subproject;
+			
+			document.getElementById('modal-content').innerHTML = `Information about ${repo}<br>name: ${get_name}<br>url: ${get_url}<br>readme: ${get_readme}<br>description: ${get_description}<br>complete_status: ${get_complete_status}<br>multi: ${get_multi}<br>subproject: ${get_subproject}`;
+			myModal.open('#myModal');
+		})
+		.catch((error) => {
+			console.error('There has been a problem with your fetch operation:', error);
+		});
 		
         document.getElementById('modal-content').innerHTML = `Information about ${repo}`;
         myModal.open('#myModal');

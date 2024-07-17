@@ -38,18 +38,18 @@ repos = {
         'ft_printf': ['implement'],
         'get_next_line': ['implement'],
         'Born2BeRoot': ['os', 'implement', 'security', 'network'],
-        'exam-rank02' : ['implement'],
+        'exam_rank02' : ['implement'],
         'minitalk': ['network', 'implement'],
         'so_long': ['game&simulation', 'implement'],
         'push_swap': ['algorithm', 'implement', 'optimization'],
-        'exam-rank03': ['implement'],
+        'exam_rank03': ['implement'],
         'minishell': ['implement', 'os', 'teamTask'],
-        'philosopher': ['os', 'implement', 'optimization'],
-        'exam-rank04': ['implement'],
+        'philosophers': ['os', 'implement', 'optimization'],
+        'exam_rank04': ['implement'],
         'netpractice': ['network'],
-        'CPPModule04': ['implement'],
+        'CPPModule4': ['implement'],
         'cub3d': ['graphic', 'game&simulation', 'algorithm', 'teamTask'],
-        'CPPModule09': ['implement'],
+        'CPPModule9': ['implement'],
         'ft_irc': ['network', 'implement', 'teamTask'],
     },
     'fss_project': ['web/mobile', 'security', 'network', 'devops&publish', 'fullstack'],
@@ -115,15 +115,15 @@ category_weights = {
     'so_long': get_weights(repos['42seoul-course']['so_long'], category_len2),
     'push_swap': get_weights(repos['42seoul-course']['push_swap'], category_len4),
     'minishell': get_weights(repos['42seoul-course']['minishell'], category_len4),
-    'philosopher': get_weights(repos['42seoul-course']['philosopher'], category_len4),
+    'philosophers': get_weights(repos['42seoul-course']['philosophers'], category_len4),
     'netpractice': get_weights(repos['42seoul-course']['netpractice'], category_len1),
-    'CPPModule04': get_weights(repos['42seoul-course']['CPPModule04'], category_len1),
+    'CPPModule4': get_weights(repos['42seoul-course']['CPPModule4'], category_len1),
     'cub3d': get_weights(repos['42seoul-course']['cub3d'], category_len4),
-    'CPPModule09': get_weights(repos['42seoul-course']['CPPModule09'], category_len1),
+    'CPPModule9': get_weights(repos['42seoul-course']['CPPModule9'], category_len1),
     'ft_irc': get_weights(repos['42seoul-course']['ft_irc'], category_len4),
-    'exam-rank02': get_weights(repos['42seoul-course']['exam-rank02'], category_len1),
-    'exam-rank03': get_weights(repos['42seoul-course']['exam-rank03'], category_len1),
-    'exam-rank04': get_weights(repos['42seoul-course']['exam-rank04'], category_len1),
+    'exam_rank02': get_weights(repos['42seoul-course']['exam_rank02'], category_len1),
+    'exam_rank03': get_weights(repos['42seoul-course']['exam_rank03'], category_len1),
+    'exam_rank04': get_weights(repos['42seoul-course']['exam_rank04'], category_len1),
     'fss_project': get_weights(repos['fss_project'], category_len5),
     'java-board-web': get_weights(repos['java-board-web'], category_len5),
     'study-database': get_weights(repos['BE-study']['study-database'], category_len1),
@@ -170,7 +170,7 @@ def find_optimal_location(categories, weights):
     result = minimize(weighted_distance, initial_guess, args=(categories, weights), method='L-BFGS-B')
     return result.x
 
-def generate_database(uvicorn_log_level):
+def generate_database():
     # 레포지토리 별 최적의 위치 계산
     repo_optimal_locations = {}
     for repo, categories in repos.items():

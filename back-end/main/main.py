@@ -1,6 +1,7 @@
 # import library
 import uvicorn
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request
+from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
@@ -12,6 +13,7 @@ from module import get_readme_gitapi as readme
 from module import logging as log
 from module import generate_db as gdb
 from module import save_repo_data_in_mongo as saveInMongo
+from module import get_database_info as db_info
 
 class FASTAPI_SERVER:
     
@@ -70,6 +72,8 @@ class FASTAPI_SERVER:
         self.router.add_api_route('/readme', endpoint=self.get_all_repo_readme, methods=['GET'])
         self.router.add_api_route('/repo-category', endpoint=self.get_all_repo_category, methods=['GET'])
         self.router.add_api_route('/generate-database', endpoint=self.generate_database, methods=['GET'])
+        # fetch(`http://localhost:8000/get-repo-info?repo=${repo}`)
+        self.router.add_api_route('/get-repo-info', endpoint=self.get_repo_info, methods=['GET'])
         self.app.include_router(self.router)
         
         print("=====================================")
@@ -94,7 +98,16 @@ class FASTAPI_SERVER:
     def get_all_repo_readme(self):
         repo_all_list = readme.get_all_repos(self.token)
         repo_all_list = readme.get_readme(repo_all_list, self.OWNER_NAME, self.token)
-        saveInMongo.save_repo_data_in_mongo(repo_all_list, self.current_os)
+        
+        for repo in repo_all_list:
+            print(repo.get('name'))
+        
+        if "ft_printf" in repo_all_list:
+            print("success")
+        else:
+            print("fail")
+
+        saveInMongo.save_repos_data_in_mongo(repo_all_list, self.current_os)
         return repo_all_list
     
     def get_all_repo_category(self):
@@ -112,9 +125,19 @@ class FASTAPI_SERVER:
         return json_repo_category
     
     def generate_database(self):
-        gdb.generate_database(uvicorn.config.LOG_LEVEL)
+        gdb.generate_database()
         return {"status": "success"}
 
+    async def get_repo_info(self, request: Request):
+        repo = request.query_params.get('repo')
+        print("repo: ", repo)
+        if not repo:
+            return JSONResponse(status_code=400, content={"error": "Repository name not provided"})
+        repo_info = db_info.find_repo_data(repo)
+        if not repo_info:
+            return JSONResponse(status_code=404, content={"error": "Repository not found"})
+        return JSONResponse(status_code=200, content=repo_info)
+    
 fastapi_server = FASTAPI_SERVER()
 app = fastapi_server.app
 

@@ -1,6 +1,9 @@
 
 from requests import get
 import base64
+import platform
+
+from module import save_repo_data_in_mongo as saveInMongo
 
 # 1. 모든 repository의 이름과 url을 가져온다.
 def get_all_repos(token):
@@ -71,9 +74,12 @@ def get_readme(repo_all_list, OWNER_NAME, token):
                 print(repo['name'])
             if multi == 'TRUE':
                 for sub_project in project_subproject:
-                    print(repo['name'], sub_project)
                     subproject_readme = get_subproject_readme(repo, sub_project, OWNER_NAME, token)
+                    current_os = platform.system()
+                    print(sub_project)
+                    saveInMongo.save_repo_data_in_mongo(subproject_readme, current_os)
                     repo_all_list.append(subproject_readme)
+        
         else:
             repo["readme"] = ""
     return repo_all_list
