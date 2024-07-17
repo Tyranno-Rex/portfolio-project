@@ -40,6 +40,8 @@ let hoveredLabel = document.createElement('div');
 hoveredLabel.className = 'label';
 document.body.appendChild(hoveredLabel);
 
+var ClickedCategory = false;
+var ClickedRepo = false;
 
 
 const WhenStart = "2022-07-09";
@@ -86,7 +88,6 @@ creditText.className = 'credit';
 creditText.style.color = 'white';
 creditText.style.fontSize = '30px';
 creditText.style.pointerEvents = 'auto';
-// creditText.style.zIndex = '1000'; 
 
 let creditLabel1 = new CSS2DObject(creditText);
 creditLabel1.position.set(-1000, 0, 0);
@@ -147,6 +148,8 @@ const mouse = new THREE.Vector2();
 let planets = [];
 let orbitControls = [];
 let repoObjects = [];
+let repoAndCategory = [];
+let orbitSystem = new THREE.Group();
 
 function getRandomColor() {
 	var color = "";
@@ -232,7 +235,6 @@ function makeStarRoad(data) {
 		scene.add( light2 );
 	}
 
-	let orbitSystem = new THREE.Group();
 	var orbitRadius = 5;
 	var data_repo_category = data["repo-category"];
 
@@ -295,16 +297,18 @@ function makeStarRoad(data) {
 		var moonGeometry = new THREE.SphereGeometry(1, 32, 16);
 		var moonMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
 		repoObject.mesh = new THREE.Mesh(moonGeometry, moonMaterial);
+		repoObject.mesh.name = repo;
 		scene.add(repoObject.mesh);
 
 		repoObjects.push(repoObject);
-
+		repoAndCategory.push({repo: repo, categories: categories});
         // 점들로부터 geometry 생성
         var curvePoints = curve.getPoints(100);
         var geometry = new THREE.BufferGeometry().setFromPoints(curvePoints);
 
         // // Line material 생성
         var material = new THREE.LineBasicMaterial({ 
+				name: repo,
 				color: 0xffffff, 
 				// transparent: true, 
 				// opacity: 0.3, 
@@ -332,10 +336,59 @@ function onMouseClick(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(planets);
-    if (intersects.length > 0) {
-        const target = intersects[0].object.position;
+    
+	// Category를 클릭했을 때
+	if (intersects.length > 0) {
+        ClickedCategory = true;
+		const target = intersects[0].object.position;
         cameraControls.moveTo(target.x, target.y, target.z, true);
+
+		// 그리고 해당 category에 해당하는 repo들을 보여주고, 다른 repo들은 숨긴다.
+		var category = intersects[0].object.name;
+		repoObjects.forEach(repo => {
+			if (repoAndCategory.find(x => x.repo == repo.name).categories.includes(category)) {
+				repo.mesh.visible = true;
+			} else {
+				repo.mesh.visible = false;
+			}
+		});
+
+		// 그리고 해당 category에 해당하는 sun을 보여주고, 다른 sun들은 숨긴다.
+		orbitControls.forEach(orbitControl => {
+			if (orbitControl.sun == category) {
+				scene.getObjectByName(orbitControl.sun).visible = true;
+			}
+			else {
+				scene.getObjectByName(orbitControl.sun).visible = false;
+			}
+		});
+
+
+		// 그리고 모든 궤도를 숨긴다.
+		orbitSystem.children.forEach(orbit => {
+			orbit.material.visible = false;
+		});
     }
+
+
+	// Repo를 클릭했을 때
+	const intersects2 = raycaster.intersectObjects(repoObjects.map(repo => repo.mesh));
+	if (intersects2.length > 0) {
+		// console.log(intersects2[0].object.name);
+
+		// // 해당 repo의 궤도를 보여줌
+		orbitSystem.children.forEach(orbit => {
+			if (orbit.material.name == intersects2[0].object.name) {
+				console.log(orbit.material.name);
+				orbit.material.visible = true;
+			} else {
+				orbit.material.visible = false;
+			}
+		});
+		
+		const target = intersects2[0].object.position;
+		cameraControls.moveTo(target.x, target.y, target.z, true);
+	}
 }
 
 function onMouseMove(event) {
@@ -360,7 +413,6 @@ function onMouseMove(event) {
     }
 }
 
-
 renderer.domElement.addEventListener('click', onMouseClick, false);
 renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 
@@ -372,6 +424,15 @@ function animate() {
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
     requestAnimationFrame(animate);
+}
+
+function showAll() {
+	repoObjects.forEach(repo => {
+		repo.mesh.visible = true;
+	});
+	orbitControls.forEach(orbitControl => {
+		scene.getObjectByName(orbitControl.sun).visible = true;
+	});
 }
 
 animate();
@@ -388,38 +449,8 @@ function customFitTo() {
 
 }
 
-// make variable available to browser console
 globalThis.THREE = THREE;
 globalThis.CameraControls = CameraControls;
 globalThis.camera = camera;
 globalThis.cameraControls = cameraControls;
 globalThis.customFitTo = customFitTo;
-
-
-
-/**
-핵심 코어 기능
-1. library는 THREE.js (3D 라이브러리), CSS2DRenderer (2D 렌더러), hold-event (키보드 이벤트), camera-controls (카메라 컨트롤러)를 사용한다
-
-2. 3D 랜더링을 필요한 필수 요소 : Scene, Camera, Renderer
-	2-1. Scene : 3D 공간을 의미하며, 모든 객체들이 포함되는 공간이다
-	2-2. Camera : 사용자가 보는 시점을 의미하며, 여러 종류가 있다. 여기서는 PerspectiveCamera를 사용한다
-	2-3. Renderer : Scene과 Camera를 렌더링하여 화면에 표시하는 역할을 한다
-
-3. 물체 생성
-	3-1. SphereGeometry : 구체를 생성하는 객체이며, radius, widthSegments, heightSegments를 인자로 받는다
-	3-2. MeshStandardMaterial : 물체의 속성을 정의하는 객체이며, color, emissive, emissiveIntensity, transparent, opacity를 인자로 받는다
-	3-3. Mesh : 물체를 생성하는 객체이며, geometry, material를 인자로 받는다
-
-4. WebGL Pipeline
-	4-1. [Input geometry + Attributes]
-	4-2. Memory (: Gemotry, Buffer, Texture 등이 저장되는 공간)
-	4-3. JavaScript (: GPU에 전달되는 공간)
-	4-3. Vertex Shader (: Vertex의 위치를 계산하는 공간)
-	4-4. Primitive Assembly[= Triangle Assembly] (: Vertex를 삼각형으로 변환하는 공간)
-	4-5. Rasterization (: 삼각형을 화면에 표시하는 공간)
-	4-6. Fragment Shader (: 픽셀의 색상을 계산하는 공간)
-	4-7. Fragment Operation (: 픽셀의 색상을 조작하는 공간)
-	4-8. Frame Buffer (: 화면에 표시되는 공간)
-
-**/ 
