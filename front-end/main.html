@@ -20,19 +20,36 @@
 		cursor: zoom-in;
 	}
 </style>
+<link rel="stylesheet" href="./dist/hystmodal.min.css">
+<script src="./dist/hystmodal.min.js"></script>
 </head>
 <body>
+	<!-- modal by library (hystmodal) -->
+	<div class="hystmodal" id="myModal" aria-hidden="false">
+		<div class="hystmodal__wrap">
+			<div class="hystmodal__window" role="dialog" aria-modal="true">
+				<div id="modal-content">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- basic commands -->
 	<div class="info">
-		<a onclick="cameraControls.moveTo(80, 15, 0, true ), showAll">reset position</a>
+		<a onclick="cameraControls.moveTo(80, 15, 0, true); showAll();">reset position</a>
 		<br>
-		<a onclick="cameraControls.moveTo(-900, 0, 0, true )">go to credits</a>
+		<a onclick="cameraControls.moveTo(-900, 0, 0, true)">go to credits</a>
 	</div>
 	
+	<!-- title -->
 	<div class="title">
 		<span>Jeong Eun Seong's Portfolio Site</span>
 	</div>
 
+	<!-- 3D canvas -->
 	<script async src="https://unpkg.com/es-module-shims@1.8.2/dist/es-module-shims.js"></script>
+	
+	<!-- three.js -->
 	<script type="importmap">
 		{
 			"imports": {
@@ -41,6 +58,15 @@
 			}
 		}
 	</script>
+	
+	<!-- main script -->
 	<script type="module" src="./main.js"></script>
+	
+	<!-- modal script -->
+	<script>
+		const myModal = new HystModal({
+			linkAttributeName: "data-hystmodal",
+		});
+	</script>
 </body>
 </html>

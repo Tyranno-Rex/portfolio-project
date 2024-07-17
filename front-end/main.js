@@ -310,8 +310,8 @@ function makeStarRoad(data) {
         var material = new THREE.LineBasicMaterial({ 
 				name: repo,
 				color: 0xffffff, 
-				// transparent: true, 
-				// opacity: 0.3, 
+				transparent: true, 
+				opacity: 0.3, 
 				visible: false 
 			});
         var curveObject = new THREE.Line(geometry, material);
@@ -363,7 +363,6 @@ function onMouseClick(event) {
 			}
 		});
 
-
 		// 그리고 모든 궤도를 숨긴다.
 		orbitSystem.children.forEach(orbit => {
 			orbit.material.visible = false;
@@ -374,9 +373,17 @@ function onMouseClick(event) {
 	// Repo를 클릭했을 때
 	const intersects2 = raycaster.intersectObjects(repoObjects.map(repo => repo.mesh));
 	if (intersects2.length > 0) {
-		// console.log(intersects2[0].object.name);
+		
+		// 해당 repo가 아닌 다른 repo들을 숨긴다.
+		repoObjects.forEach(repo => {
+			if (repo.mesh.name == intersects2[0].object.name) {
+				repo.mesh.visible = true;
+			} else {
+				repo.mesh.visible = false;
+			}
+		});
 
-		// // 해당 repo의 궤도를 보여줌
+		// 해당 repo의 궤도를 보여준다.
 		orbitSystem.children.forEach(orbit => {
 			if (orbit.material.name == intersects2[0].object.name) {
 				console.log(orbit.material.name);
@@ -385,7 +392,38 @@ function onMouseClick(event) {
 				orbit.material.visible = false;
 			}
 		});
+
+		// 해당 repo와 연결된 category들을 보여준다.
+		var repo = intersects2[0].object.name;
+		orbitControls.forEach(orbitControl => {
+			if (repoAndCategory.find(x => x.repo == repo).categories.includes(orbitControl.sun)) {
+				scene.getObjectByName(orbitControl.sun).visible = true;
+			} else {
+				scene.getObjectByName(orbitControl.sun).visible = false;
+			}
+		});
 		
+		// 해당 repo에 대한 간략한 정보를 보여준다. 모달창을 띄워서 보여준다.
+		// Populate and open the modal
+		// fetch(`http://43.202.167.77:8000/get_repo_info?repo=${repo}`)
+		// .then((response) => {
+		// 	if (!response.ok) {
+		// 		throw new Error('Network response was not ok');
+		// 	}
+		// 	return response.json();
+		// })
+		// .then((data) => {
+		// 	document.getElementById('modal-content').innerHTML = `Information about ${repo}<br><br>${data}`;
+		// 	myModal.open('#myModal');
+		// })
+		// .catch((error) => {
+		// 	console.error('There has been a problem with your fetch operation:', error);
+		// });
+		
+        document.getElementById('modal-content').innerHTML = `Information about ${repo}`;
+        myModal.open('#myModal');
+
+
 		const target = intersects2[0].object.position;
 		cameraControls.moveTo(target.x, target.y, target.z, true);
 	}
@@ -427,11 +465,15 @@ function animate() {
 }
 
 function showAll() {
+	console.log("showAll");
 	repoObjects.forEach(repo => {
 		repo.mesh.visible = true;
 	});
 	orbitControls.forEach(orbitControl => {
 		scene.getObjectByName(orbitControl.sun).visible = true;
+	});
+	orbitSystem.children.forEach(orbit => {
+		orbit.material.visible = false;
 	});
 }
 
@@ -454,3 +496,6 @@ globalThis.CameraControls = CameraControls;
 globalThis.camera = camera;
 globalThis.cameraControls = cameraControls;
 globalThis.customFitTo = customFitTo;
+window.showAll = showAll;
+
+export { showAll };
