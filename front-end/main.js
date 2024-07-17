@@ -160,8 +160,8 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-// fetch("http://43.202.167.77:8000/repo-category")
-fetch("http://localhost:8000/repo-category")
+fetch("http://43.202.167.77:8000/repo-category")
+// fetch("http://localhost:8000/repo-category")
 .then((response) => {
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
@@ -404,7 +404,8 @@ function onMouseClick(event) {
 			}
 		});
 		
-		fetch(`http://192.168.3.3:8000/get-repo-info?repo=${repo}`)
+		// fetch(`http://192.168.3.3:8000/get-repo-info?repo=${repo}`)
+		fetch(`http://43.202.167.77:8000/get-repo-info?repo=${repo}`)
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
