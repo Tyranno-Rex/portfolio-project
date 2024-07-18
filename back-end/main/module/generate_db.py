@@ -72,7 +72,7 @@ repos = {
         'softwareEngineering': ['other'],
     },
     'Kyunghee_2023_3Grade_First_Semester': {
-        '3D data processing': ['algorithm', 'graphic'],
+        '3D_Data_Processing': ['algorithm', 'graphic'],
         'AI_and_Game_Programming': ['ai', 'algorithm'],
         'Game_Engineering': ['game&simulation', 'optimization', 'algorithm', 'teamTask', 'graphic'],
         'Game_Graphics_Programming': ['graphic'],
@@ -138,7 +138,7 @@ category_weights = {
     'LatestTechnologyColloquium2': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['LatestTechnologyColloquium2'], category_len5),
     'OOP': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['OOP'], category_len1),
     'softwareEngineering': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['softwareEngineering'], category_len5),
-    '3D data processing': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['3D data processing'], category_len2),
+    '3D_Data_Processing': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['3D_Data_Processing'], category_len2),
     'AI_and_Game_Programming': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['AI_and_Game_Programming'], category_len2),
     'Game_Engineering': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['Game_Engineering'], category_len5),
     'Game_Graphics_Programming': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['Game_Graphics_Programming'], category_len1),

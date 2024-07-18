@@ -37,36 +37,38 @@ class FASTAPI_SERVER:
         # 운영 체제를 확인하여 디버그 모드와 릴리즈 모드를 설정합니다.
         self.current_os = platform.system()
         print("Environment: ", self.current_os)
+        try :
+            print("=====================================")
+            print("MongoDB Connection")
+            if self.current_os == 'Windows':
+                PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
+            else:
+                PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
+            
+            print("Password: ", PASSWORD)
+            self.client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
+            try:
+                self.client.admin.command('ismaster')
+            except ConnectionFailure:
+                print('MongoDB server not available')
+            # readme 데이터베이스
+            self.git_repo_mongodb = self.client['github_repo']
 
-        if self.current_os == 'Windows':
-            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
-        else:
-            PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
-        
-        print("MongoDB Connection")
-        print("Password: ", PASSWORD)
+            # portfolio 데이터베이스
+            self.portfoilo = self.client['portfolio']
+            self.repos = self.portfoilo['repo-positions']
+            self.categories = self.portfoilo['category-positions']
+            self.repo_category = self.portfoilo['repo-category']
+            print("MongoDB Connection Complete")
+            print("=====================================")
+        except Exception as e:
+            print("MongoDB Connection Error: ", e)
+            print("=====================================")
 
-        self.client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
-
-
-        print("MongoDB Connection")
-        try:
-            self.client.admin.command('ismaster')
-            print('Connected to MongoDB')
-        except ConnectionFailure:
-            print('MongoDB server not available')
-        # readme 데이터베이스
-        self.git_repo_mongodb = self.client['github_repo']
-
-        # portfolio 데이터베이스
-        self.portfoilo = self.client['portfolio']
-        self.repos = self.portfoilo['repo-positions']
-        self.categories = self.portfoilo['category-positions']
-        self.repo_category = self.portfoilo['repo-category']
-
+        print("=====================================")
+        print("FastAPI Server Setting")
         # FastAPI 이벤트 설정
         self.app.add_event_handler("startup", self.startup_event)
-        
         # FastAPI 라우터 설정
         self.router = APIRouter()
         self.router.add_api_route('/readme', endpoint=self.get_all_repo_readme, methods=['GET'])
@@ -74,20 +76,27 @@ class FASTAPI_SERVER:
         self.router.add_api_route('/generate-database', endpoint=self.generate_database, methods=['GET'])
         self.router.add_api_route('/get-repo-info', endpoint=self.get_repo_info, methods=['GET'])
         self.app.include_router(self.router)
-        
-        print("=====================================")
-        if self.current_os == 'Windows':
-            print("DEBUG")
-            self.token = open("./back-end/main/database/password-git-token.txt", "r").read().strip()
-        else:
-            print("RELEASE")
-            try:
-                self.token = open('/app/git-token.txt', 'r').read().strip()
-            except FileNotFoundError:
-                self.token = "null"
-        print("Token: ", self.token)
+        print("FastAPI Server Setting Complete")
         print("=====================================")
 
+        try:
+            print("=====================================")
+            print("Token Setting")
+            if self.current_os == 'Windows':
+                print("DEBUG")
+                self.token = open("./back-end/main/database/password-git-token.txt", "r").read().strip()
+            else:
+                print("RELEASE")
+                try:
+                    self.token = open('/app/git-token.txt', 'r').read().strip()
+                except FileNotFoundError:
+                    self.token = "null"
+            print("Token: ", self.token)
+            print("Token Setting Complete")
+            print("=====================================")
+        except Exception as e:
+            print("Token Error: ", e)
+            print("=====================================")
 
     async def startup_event(self):
         log.access_log()
@@ -95,10 +104,6 @@ class FASTAPI_SERVER:
     def get_all_repo_readme(self):
         repo_all_list = readme.get_all_repos(self.token)
         repo_all_list = readme.get_readme(repo_all_list, self.OWNER_NAME, self.token)
-        
-        for repo in repo_all_list:
-            print(repo.get('name'))
-        saveInMongo.save_repos_data_in_mongo(repo_all_list, self.current_os)
         return repo_all_list
     
     def get_all_repo_category(self):
@@ -121,7 +126,6 @@ class FASTAPI_SERVER:
 
     async def get_repo_info(self, request: Request):
         repo = request.query_params.get('repo')
-        print("repo: ", repo)
         if not repo:
             return JSONResponse(status_code=400, content={"error": "Repository name not provided"})
         repo_info = db_info.find_repo_data(repo)

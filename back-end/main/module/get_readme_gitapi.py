@@ -25,7 +25,6 @@ def get_all_repos(token):
         })
     return repo_all_list
 
-
 def decode_base64(content):
     base64_bytes = content.encode('ascii')
     message_bytes = base64.b64decode(base64_bytes)
@@ -33,10 +32,14 @@ def decode_base64(content):
 
 # 2. 각 repository의 README.md를 가져온다.
 def get_readme(repo_all_list, OWNER_NAME, token):
+    current_os = platform.system()
     for repo in repo_all_list:
-        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course", "algorithm"]:
+
+        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course",\
+                                "algorithm",  "java-board-web", "Kyunghee_2022_2Grade_Second_Semester",\
+                                "Kyunghee_2023_3Grade_First_Semester"]:
             continue
-        
+
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
         headers_readme = {
             "Accept": "application/vnd.github+json",
@@ -69,23 +72,18 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             repo['subproject'] = project_subproject
         
             multi = project_multi[0]
-            if multi == 'FALSE':
-                print(repo['name'])
             if multi == 'TRUE':
                 for sub_project in project_subproject:
                     subproject_readme = get_subproject_readme(repo, sub_project, OWNER_NAME, token)
-                    current_os = platform.system()
-                    print(sub_project)
                     saveInMongo.save_repo_data_in_mongo(subproject_readme, current_os)
                     repo_all_list.append(subproject_readme)
-        
+            saveInMongo.save_repo_data_in_mongo(repo, current_os)
         else:
             repo["readme"] = ""
     return repo_all_list
 
 # 3. 각 repository에서 세부 파일에서 readme가 있는 경우 가져온다.
 def get_subproject_readme(repo, subproject, OWNER_NAME, token):
-    # print("test: ", /
     url_sub_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/contents/{subproject}"
     headers_sub_readme = {
         "Accept": "application/vnd.github+json",
