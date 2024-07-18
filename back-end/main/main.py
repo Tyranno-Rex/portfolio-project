@@ -36,11 +36,15 @@ class FASTAPI_SERVER:
 
         # 운영 체제를 확인하여 디버그 모드와 릴리즈 모드를 설정합니다.
         self.current_os = platform.system()
+        print("Environment: ", self.current_os)
 
         if self.current_os == 'Windows':
-            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
+            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
         else:
-            PASSWORD = open("/app/mongo-token.txt", "r").readline()
+            PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
+        
+        print("MongoDB Connection")
+        print("Password: ", PASSWORD)
 
         self.client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
 

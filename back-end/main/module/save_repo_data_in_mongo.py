@@ -5,9 +5,9 @@ import platform
 def save_repo_data_in_mongo(repo, current_os):
     current_os = platform.system()
     if current_os == 'Windows':
-        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
+        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
     else:
-        PASSWORD = open("/app/mongo-token.txt", "r").readline()
+        PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
     
     client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
     
@@ -59,9 +59,9 @@ def save_repo_data_in_mongo(repo, current_os):
 def save_repos_data_in_mongo(repo_all_list, current_os):
     current_os = platform.system()
     if current_os == 'Windows':
-        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
+        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
     else:
-        PASSWORD = open("/app/mongo-token.txt", "r").readline()
+        PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
     
     client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
     

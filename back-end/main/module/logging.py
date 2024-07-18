@@ -22,9 +22,9 @@ def save_log_to_mongodb(log_message):
 
         current_os = platform.system()
         if current_os == 'Windows':
-            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
+            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
         else:
-            PASSWORD = open("/app/mongo-token.txt", "r").readline()
+            PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
         client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
         
         log_db = client['log']
