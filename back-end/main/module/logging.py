@@ -21,17 +21,17 @@ def save_log_to_mongodb(log_message):
         }
 
         current_os = platform.system()
-        client = None
         if current_os == 'Windows':
-            client = MongoClient('localhost', 27017)
-        elif current_os == 'Linux':
-            client = MongoClient('mongodb://root:1234@mongodb-container/')
+            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
         else:
-            print("OS not supported")
+            PASSWORD = open("/app/mongo-token.txt", "r").readline()
+        client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
+        
         log_db = client['log']
         log = log_db[today]
         log.insert_one(log_entry)
-        client.close()  # MongoDB 연결 종료
+        client.close()
+
     except Exception as e:
         print(f"Failed to save log to MongoDB: {e}")
 

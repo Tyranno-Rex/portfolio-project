@@ -6,12 +6,10 @@ def find_repo_data(repo_name):
 
     current_os = platform.system()
     if current_os == 'Windows':
-        client = MongoClient('mongodb://localhost:27017/')
-    elif current_os == 'Linux':
-        client = MongoClient('mongodb://root:1234@mongodb-container/')
+        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
     else:
-        print("OS not supported")
-        exit(1)
+        PASSWORD = open("/app/mongo-token.txt", "r").readline()
+    client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
     
     db = client['portfolio']
     repos = db['database']

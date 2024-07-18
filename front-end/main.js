@@ -160,8 +160,9 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-fetch("http://43.202.167.77:8000/repo-category")
 // fetch("http://localhost:8000/repo-category")
+// fetch("http://192.168.3.3:8000/repo-category")
+fetch("http://43.202.167.77:8000/repo-category")
 .then((response) => {
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
@@ -387,7 +388,6 @@ function onMouseClick(event) {
 		// 해당 repo의 궤도를 보여준다.
 		orbitSystem.children.forEach(orbit => {
 			if (orbit.material.name == intersects2[0].object.name) {
-				console.log(orbit.material.name);
 				orbit.material.visible = true;
 			} else {
 				orbit.material.visible = false;
@@ -404,7 +404,6 @@ function onMouseClick(event) {
 			}
 		});
 		
-		// fetch(`http://192.168.3.3:8000/get-repo-info?repo=${repo}`)
 		fetch(`http://43.202.167.77:8000/get-repo-info?repo=${repo}`)
 		.then((response) => {
 			if (!response.ok) {
@@ -413,7 +412,6 @@ function onMouseClick(event) {
 			return response.json();
 		})
 		.then((data) => {
-			console.log(data);
 			document.getElementById('modal-content').innerHTML = `Information about ${repo}<br>${data}`;
 			// {name: 'libft', url: "'https://github.com/Tyranno-Rex/42seoul-course/tree/main/libft'", readme: "```markdown\n# Libft\n\nLibft is a custom implementat…tion.so/0-libft-5eac5697c9f340a28a47601182c109cb'", description: 'A custom implementation of standard C library func…nd create a reusable library for future projects.', complete_status: 'TRUE', …}
 			var get_name = data.name;
@@ -476,7 +474,6 @@ function animate() {
 }
 
 function showAll() {
-	console.log("showAll");
 	repoObjects.forEach(repo => {
 		repo.mesh.visible = true;
 	});

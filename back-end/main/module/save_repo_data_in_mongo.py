@@ -1,15 +1,15 @@
 from bson import ObjectId
 from pymongo import MongoClient
-
+import platform
 
 def save_repo_data_in_mongo(repo, current_os):
+    current_os = platform.system()
     if current_os == 'Windows':
-        client = MongoClient('mongodb://localhost:27017/')
-    elif current_os == 'Linux':
-        client = MongoClient('mongodb://root:1234@mongodb-container/')
+        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
     else:
-        print("OS not supported")
-        exit(1)
+        PASSWORD = open("/app/mongo-token.txt", "r").readline()
+    
+    client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
     
     db = client['portfolio']
     repos = db['database']
@@ -53,15 +53,17 @@ def save_repo_data_in_mongo(repo, current_os):
     else:
         print("Update: ", repo["name"])
         repos.update_one({"name": repo["name"]}, {"$set": repo})
+    
+    client.close()
 
 def save_repos_data_in_mongo(repo_all_list, current_os):
+    current_os = platform.system()
     if current_os == 'Windows':
-        client = MongoClient('mongodb://localhost:27017/')
-    elif current_os == 'Linux':
-        client = MongoClient('mongodb://root:1234@mongodb-container/')
+        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
     else:
-        print("OS not supported")
-        exit(1)
+        PASSWORD = open("/app/mongo-token.txt", "r").readline()
+    
+    client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
     
     db = client['portfolio']
     repos = db['database']
@@ -109,6 +111,7 @@ def save_repos_data_in_mongo(repo_all_list, current_os):
         else:
             print("Update: ", repo["name"])
             repos.update_one({"name": repo["name"]}, {"$set": repo})
+    
     client.close()
     return True
 

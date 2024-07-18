@@ -28,7 +28,6 @@ category_coords = {
     'frontend':         np.array([3, 5, 8]),
 }
 
-
 # 레포지토리 데이터
 repos = {
     'portfolio-project': ['graphic', 'ai', 'web/mobile', 'algorithm', 'fullstack'],
@@ -92,7 +91,6 @@ repos = {
         'Shell': ['os'],
     },
 }
-
 
 category_len1 = [3]
 category_len2 = [3, 2]
@@ -185,20 +183,17 @@ def generate_database():
             optimal_location = find_optimal_location(categories, weights)
             repo_optimal_locations[repo] = optimal_location
 
-    
     current_os = platform.system()
-    client = None
     if current_os == 'Windows':
-        client = MongoClient('localhost', 27017)
-    elif current_os == 'Linux':
-        client = MongoClient('mongodb://root:1234@mongodb-container/')
+        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
     else:
-        print("OS not supported")
+        PASSWORD = open("/app/mongo-token.txt", "r").readline()
+    
+    client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
 
     try:
         # 연결 테스트
         client.admin.command('ismaster')
-        db = client['github']
         print('Connected to MongoDB')
     except ConnectionFailure:
         print('MongoDB server not available')
@@ -207,8 +202,6 @@ def generate_database():
     collection  = db['repo-positions']
     collection2 = db['category-positions']
     collection3 = db['repo-category']
-    col = db['repo-category']
-
 
     # 레포지토리 위치 저장
     for repo, position in repo_optimal_locations.items():
@@ -228,3 +221,5 @@ def generate_database():
                 collection3.insert_one({'repo': f'{repo}/{sub_repo}', 'categories': sub_categories})
         else:
             collection3.insert_one({'repo': repo, 'categories': categories})
+
+    client.close()

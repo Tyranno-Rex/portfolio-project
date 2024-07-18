@@ -36,18 +36,15 @@ class FASTAPI_SERVER:
 
         # 운영 체제를 확인하여 디버그 모드와 릴리즈 모드를 설정합니다.
         self.current_os = platform.system()
-        print("=====================================")
-        print("OS: ", self.current_os)
+
         if self.current_os == 'Windows':
-            print("DEBUG")
-            self.client = MongoClient('localhost', 27017)
-        elif self.current_os == 'Linux':
-            print("RELEASE")
-            self.client = MongoClient('mongodb://root:1234@mongodb-container/')
+            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").readline()
         else:
-            print("OS not supported")
-            exit(1)
-        print("=====================================")
+            PASSWORD = open("/app/mongo-token.txt", "r").readline()
+
+        self.client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
+
+
         print("MongoDB Connection")
         try:
             self.client.admin.command('ismaster')
@@ -56,7 +53,6 @@ class FASTAPI_SERVER:
             print('MongoDB server not available')
         # readme 데이터베이스
         self.git_repo_mongodb = self.client['github_repo']
-        print("=====================================")
 
         # portfolio 데이터베이스
         self.portfoilo = self.client['portfolio']
@@ -72,18 +68,15 @@ class FASTAPI_SERVER:
         self.router.add_api_route('/readme', endpoint=self.get_all_repo_readme, methods=['GET'])
         self.router.add_api_route('/repo-category', endpoint=self.get_all_repo_category, methods=['GET'])
         self.router.add_api_route('/generate-database', endpoint=self.generate_database, methods=['GET'])
-        # fetch(`http://localhost:8000/get-repo-info?repo=${repo}`)
         self.router.add_api_route('/get-repo-info', endpoint=self.get_repo_info, methods=['GET'])
         self.app.include_router(self.router)
         
         print("=====================================")
         if self.current_os == 'Windows':
-            # Windows의 ./back-end/main/git-token.txt 파일을 읽는다.
             print("DEBUG")
-            self.token = open("./back-end/main/database/git-token.txt", "r").read().strip()
+            self.token = open("./back-end/main/database/password-git-token.txt", "r").read().strip()
         else:
             print("RELEASE")
-            # 컨테이너 내의 /app/git-token.txt 파일을 읽는다.
             try:
                 self.token = open('/app/git-token.txt', 'r').read().strip()
             except FileNotFoundError:
@@ -101,12 +94,6 @@ class FASTAPI_SERVER:
         
         for repo in repo_all_list:
             print(repo.get('name'))
-        
-        if "ft_printf" in repo_all_list:
-            print("success")
-        else:
-            print("fail")
-
         saveInMongo.save_repos_data_in_mongo(repo_all_list, self.current_os)
         return repo_all_list
     

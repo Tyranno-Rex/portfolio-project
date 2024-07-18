@@ -35,7 +35,6 @@ def decode_base64(content):
 def get_readme(repo_all_list, OWNER_NAME, token):
     for repo in repo_all_list:
         if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course", "algorithm"]:
-        # if repo["name"] not in ["BE-study", "portfolio-project"]:
             continue
         
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
