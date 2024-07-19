@@ -42,6 +42,7 @@ document.body.appendChild(hoveredLabel);
 
 var ClickedCategory = false;
 var ClickedRepo = false;
+var WindowChange = true;
 
 
 const WhenStart = "2022-07-09";
@@ -97,7 +98,6 @@ labelRenderer.domElement.style.pointerEvents = 'none';
 updateCreditText();
 setInterval(updateCreditText, 1000);
 
-
 const KEYCODE = {
 	W: 87,
 	A: 65,
@@ -146,6 +146,9 @@ scene.add(stars);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let planets = [];
+let SelectedCategory = [];
+var repoLabels = [];
+var categoryLabels = [];
 let orbitControls = [];
 let repoObjects = [];
 let repoAndCategory = [];
@@ -176,6 +179,8 @@ fetch("http://43.202.167.77:8000/repo-category")
 	console.error('There has been a problem with your fetch operation:', error);
 });
 
+
+// 1 RENDERING PROCESS
 function makeStarRoad(data) {
 
 	var categories = [];
@@ -201,34 +206,24 @@ function makeStarRoad(data) {
 		});
 
 		var sun_sphere = new THREE.Mesh(sun_geometry, sun_material);
-		// var random_pos_x = Math.random() * 20 - 10;
-		// var random_pos_y = Math.random() * 20 - 10;
-		// var random_pos_z = Math.random() * 20 - 10;
-		// positions[i] = [random_pos_x, random_pos_y, random_pos_z];
+		var number = 3;
+		var random_pos_x = Math.random() * number - number / 2;
+		var random_pos_y = Math.random() * number - number / 2;
+		var random_pos_z = Math.random() * number - number / 2;
+		positions[i] = [positions[i][0] + random_pos_x, positions[i][1] + random_pos_y, positions[i][2] + random_pos_z];
 
 		sun_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
 		sun_sphere.name = categories[i];
 		scene.add(sun_sphere);
 		planets.push(sun_sphere);
-		orbitControls.push({"sun": categories[i], "position": positions[i]})
-
-		
-		// var sun_text = document.createElement('div');
-		// sun_text.className = 'label';
-		// sun_text.textContent = categories[i];
-		// sun_text.style.color = 'black';
-		// sun_text.style.fontSize = '14px';
-		// // sun_text.style.backgroundColor = 'red';
-		// var sun_label = new CSS2DObject(sun_text);
-		// sun_label.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
-		// scene.add(sun_label);
+		orbitControls.push({"sun": categories[i], "position": positions[i]});
 
 		const sphere1 = new THREE.SphereGeometry(2, 16, 8);
 		const sphere2 = new THREE.SphereGeometry(2, 16, 8);
 
 		// color를 랜덤한 2개의 값을 넣어준다.
-		var light1 = new THREE.PointLight( color1, 1000);
-		var light2 = new THREE.PointLight( color2, 1000);
+		var light1 = new THREE.PointLight( color1, 2000);
+		var light2 = new THREE.PointLight( color2, 2000);
 		light1.position.set( positions[i][0] * 5 + 0.3, positions[i][1] * 5, positions[i][2] * 5);
 		light2.position.set( positions[i][0] * 5, positions[i][1] * 5 + 0.3, positions[i][2] * 5);
 		light1.add(new THREE.Mesh(sphere1, new THREE.MeshBasicMaterial({ color: color1, transparent: true, opacity: 0})));
@@ -265,12 +260,12 @@ function makeStarRoad(data) {
 			const detail= 20
             for (var index = 0; index < detail; index++) {
                 var angle = (index * Math.PI * 2 / detail) + angleOffset;
+                // var angle = (index * Math.PI * 2 / detail);
                 var x = Math.cos(angle) * orbitRadius;
                 var z = Math.sin(angle) * orbitRadius;
 
                 // 기울기 적용
                 var y = Math.sin(angle) * Math.sin(tiltAngle) * orbitRadius;
-                x *= Math.cos(tiltAngle);
 
                 var dotGeometry = new THREE.SphereGeometry(0.1, 32, 16);
                 var dotMaterial = new THREE.MeshBasicMaterial({ color: 0xbdb3db });
@@ -292,7 +287,8 @@ function makeStarRoad(data) {
             name: repo,
             curve: curve,
             parameter: 0, // curve 상의 현재 위치 (0 ~ 1)
-            mesh: material
+            mesh: material,
+			namevisible: false
         };
 
 		// repo를 표현할 3D 객체 생성
@@ -326,13 +322,62 @@ function makeStarRoad(data) {
 }
 
 function updateRepos() {
+	
+	categoryLabels.forEach(label => {
+		scene.remove(label);
+	});
+
+	categoryLabels = [];
+	
+	SelectedCategory.forEach(category => {
+		planets.forEach(planet => {
+			if (planet.name == category) {
+				var vector = new THREE.Vector3();
+				vector.copy(planet.position).project(camera);
+				var div = document.createElement('div');
+				div.className = 'label';
+				div.textContent = category;
+				div.style.color = 'white';
+				div.style.fontSize = '20px';
+				div.style.fontFamily = 'SoDoSans';
+				var label = new CSS2DObject(div);
+				label.position.set(planet.position.x, planet.position.y, planet.position.z);
+				scene.add(label);
+				categoryLabels.push(label);
+			}
+		});
+	});
+    repoLabels.forEach(label => {
+        scene.remove(label);
+    });
+
+
+
+    repoLabels = []; 
+
     repoObjects.forEach(repo => {
-        repo.parameter = (repo.parameter + 0.0002) % 1; // 속도 조절 가능
+        repo.parameter = (repo.parameter + 0.0001) % 1; // 속도 조절 가능
         var position = repo.curve.getPointAt(repo.parameter);
         repo.mesh.position.copy(position);
+
+        if (repo.namevisible == true) {
+            var vector = new THREE.Vector3();
+            vector.copy(position).project(camera);
+            var div = document.createElement('div');
+            div.className = 'label';
+            div.textContent = repo.name;
+            div.style.color = 'white';
+            div.style.fontSize = '10px';
+			div.style.fontFamily = 'SoDoSans';
+            var label = new CSS2DObject(div);
+            label.position.set(position.x + 3, position.y + 3, position.z + 3);
+            scene.add(label);
+            repoLabels.push(label); // 배열에 라벨 추가
+        }    
     });
 }
 
+// 2. MOUSE EVENT
 function onMouseClick(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -341,7 +386,9 @@ function onMouseClick(event) {
     
 	// Category를 클릭했을 때
 	if (intersects.length > 0) {
-        ClickedCategory = true;
+		ResetClick(true, false);
+
+		WindowChange = true;
 		const target = intersects[0].object.position;
         cameraControls.moveTo(target.x, target.y, target.z, true);
 
@@ -369,13 +416,18 @@ function onMouseClick(event) {
 		orbitSystem.children.forEach(orbit => {
 			orbit.material.visible = false;
 		});
-    }
-
+		
+		SelectedCategory = [];
+		SelectedCategory.push(category);
+		SliderDisplayChange(false);
+		showRepoNameWithCategory(intersects[0].object.name);
+	}
 
 	// Repo를 클릭했을 때
 	const intersects2 = raycaster.intersectObjects(repoObjects.map(repo => repo.mesh));
 	if (intersects2.length > 0) {
-		
+		ResetClick(false, true);
+		WindowChange = true;
 		// 해당 repo가 아닌 다른 repo들을 숨긴다.
 		repoObjects.forEach(repo => {
 			if (repo.mesh.name == intersects2[0].object.name) {
@@ -399,6 +451,7 @@ function onMouseClick(event) {
 		orbitControls.forEach(orbitControl => {
 			if (repoAndCategory.find(x => x.repo == repo).categories.includes(orbitControl.sun)) {
 				scene.getObjectByName(orbitControl.sun).visible = true;
+				SelectedCategory.push(orbitControl.sun);
 			} else {
 				scene.getObjectByName(orbitControl.sun).visible = false;
 			}
@@ -435,7 +488,11 @@ function onMouseClick(event) {
 
 		const target = intersects2[0].object.position;
 		cameraControls.moveTo(target.x, target.y, target.z, true);
+	
+		showRepoName(intersects2[0].object.name);
+		SliderDisplayChange(false);
 	}
+
 }
 
 function onMouseMove(event) {
@@ -460,20 +517,100 @@ function onMouseMove(event) {
     }
 }
 
+function MoveToSun(suntitle) {
+	for (var i = 0; i < planets.length; i++) {
+		if (planets[i].name == suntitle) {
+			planets[i].visible = true;
+			// cameraControls.moveTo(planets[i].position.x, planets[i].position.y, planets[i].position.z, true);
+		} else {
+			planets[i].visible = false;
+		}
+
+		for (var j = 0; j < repoObjects.length; j++) {
+			if (repoAndCategory.find(x => x.repo == repoObjects[j].name).categories.includes(suntitle)) {
+				repoObjects[j].mesh.visible = true;
+			} else {
+				repoObjects[j].mesh.visible = false;
+			}
+		}
+	}
+}
+
+function SliderDisplayChange(flag) {
+	var slider1 = document.getElementsByClassName('slider');
+	var slider2 = document.getElementsByClassName('slider2');
+	for (var i = 0; i < slider1.length; i++) {
+		if (flag) {
+			slider1[i].style.display = 'flex';
+			slider2[i].style.display = 'flex';
+		} else {
+			slider1[i].style.display = 'none';
+			slider2[i].style.display = 'none';
+		}
+	}
+}
+
+function showCategoryDetail(category) {
+	ResetClick(true, false);
+	MoveToSun(category);
+	SliderDisplayChange(false);
+	showRepoNameWithCategory(category);
+	SelectedCategory.push(category);
+}
+
+function showRepoName(repo) {
+	for (var i = 0; i < repoObjects.length; i++) {
+		if (repoObjects[i].name == repo) {
+			repoObjects[i].namevisible = true;
+		} 
+	}
+}
+
+function showRepoNameWithCategory(category) {
+	for (var i = 0; i < repoObjects.length; i++) {
+		if (repoAndCategory.find(x => x.repo == repoObjects[i].name).categories.includes(category)) {
+			repoObjects[i].namevisible = true;
+		} 
+	}
+
+}
+
+// 3. UTIL FUNCTION
+function ResetClick(category_flag, repo_flag) {
+	if (category_flag == true)
+		ClickedCategory = true;
+	if (repo_flag == true)
+		ClickedRepo = true;
+	if (category_flag == false)
+		ClickedCategory = false;
+	if (repo_flag == false)
+		ClickedRepo = false;
+	
+
+	// 모든 repo의 namevisible을 false로 바꾼다.
+	for (var i = 0; i < repoObjects.length; i++) {
+		repoObjects[i].namevisible = false;
+	}
+}
+
 renderer.domElement.addEventListener('click', onMouseClick, false);
 renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+
 
 function animate() {
     const delta = clock.getDelta();
     const updated = cameraControls.update(delta);
 
+
     updateRepos();
-    renderer.render(scene, camera);
+	renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
 
 function showAll() {
+	ResetClick(false, false);
+	WindowChange = true;
 	repoObjects.forEach(repo => {
 		repo.mesh.visible = true;
 	});
@@ -483,6 +620,8 @@ function showAll() {
 	orbitSystem.children.forEach(orbit => {
 		orbit.material.visible = false;
 	});
+	SelectedCategory = [];
+	SliderDisplayChange(true);
 }
 
 animate();
@@ -505,5 +644,7 @@ globalThis.camera = camera;
 globalThis.cameraControls = cameraControls;
 globalThis.customFitTo = customFitTo;
 window.showAll = showAll;
+window.showCategoryDetail = showCategoryDetail;
+
 
 export { showAll };

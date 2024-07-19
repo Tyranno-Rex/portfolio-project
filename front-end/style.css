@@ -28,6 +28,22 @@
 	src : url('./asset/fonts/crotah.otf') format('opentype'),
 }
 
+@font-face {
+    font-family: 'komikax';
+    src: url('./asset/fonts/komikax.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'santana';
+    src: url('./asset/fonts/santana.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'SoDoSans';
+    src: url('./asset/fonts/SoDoSans.otf') format('opentype');
+}
+
+
 body {
 	margin: 0;
 }
@@ -41,6 +57,14 @@ canvas {
 	position: absolute;
 	padding: 20px 0 0 20px;
 	font-size: 25px;
+	font-family: 'SoDoSans';
+}
+
+.commands {
+	color: #FFF;
+	position: absolute;
+	padding: 20px 0 0 20px;
+	font-size: 1.5vw;
 	font-family: 'starwars3';
 }
 
@@ -64,17 +88,14 @@ canvas {
 	font-style: normal;
 }
 
-
-
 .title {
-    color: #FFF; /* 텍스트 색상 */
-    position: absolute; /* 절대 위치 지정 */
-    top: 0%; /* 상단 위치를 화면의 중앙에 맞춤 */
-    left: 55%; /* 좌측 위치를 화면의 중앙에 맞춤 */
-    font-size: 40px; /* 폰트 크기 */
-    font-family: starwars4; /* 폰트 패밀리 */
-    /* 추가 부분 */
-    margin-left: -25%; /* 타이틀 너비의 절반만큼 왼쪽으로 이동 */
+    color: #FFF; 
+    position: absolute; 
+    top: 0%; 
+    left: 50%; 
+    font-size: 2vw;
+    font-family: starwars4; 
+    margin-left: -20%; 
 }
 
 a {
@@ -84,8 +105,6 @@ a {
 label {
 	cursor: pointer;
 }
-
-
 
 #showChatButton {
     position: absolute;
@@ -98,7 +117,7 @@ label {
     cursor: pointer;
 
     top: calc(100% - 100px);
-    left: calc(100% - 200px);
+    left: calc(100% - 150px);
 
     display: flex; 
     align-items: center; 
@@ -110,7 +129,6 @@ label {
     height: 100%; /* 이미지가 버튼을 꽉 채우도록 */
     object-fit: cover; /* 비율 유지하며 잘리도록 */
 }
-
 
 #closeChatButton {
     position: absolute;
@@ -129,7 +147,6 @@ label {
     background-color: #d32f2f;
 }
 
-
 .chat-container {
     position: absolute;
     width: 400px;
@@ -145,7 +162,6 @@ label {
     right: 0;
     display: none; 
 }
-
 
 .chat-messages {
     flex: 1;
@@ -167,7 +183,6 @@ label {
     background-color: #e1ffc7;
     text-align: right;
 }
-
 
 .chat-input {
     display: flex;
@@ -198,3 +213,38 @@ label {
 .chat-input button:hover {
     background-color: #45a049;
 } 
+
+
+
+.slider {
+    position: absolute;
+    font-family: "starwars3";
+    color: white;
+    font-weight: 100;
+    display: flex;
+    width: 100%;
+    top: 90%;
+    justify-content: center;
+    align-items: center;
+}
+
+.slider2 {
+    position: absolute;
+    font-family: "starwars3";
+    color: white;
+    font-weight: 100;
+    display: flex;
+    width: 100%;
+    top: 93%;
+    justify-content: center;
+    align-items: center;
+}
+
+.slider__slide {
+    min-width: 8vw;
+    font-size: 1vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scroll-snap-align: start;
+}

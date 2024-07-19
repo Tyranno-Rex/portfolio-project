@@ -29,7 +29,13 @@ category_coords = {
 }
 
 # 레포지토리 데이터
+
+
 repos = {
+    'ft_irc': ['network', 'implement', 'teamTask'],
+    'minishell': ['implement', 'os', 'teamTask'],
+    'cub3d' : ['graphic', 'game&simulation', 'algorithm', 'teamTask'],
+    'bootcamp-game-project' : ['game&simulation', 'web/mobile', 'ai', 'security', 'teamTask'],
     'portfolio-project': ['graphic', 'ai', 'web/mobile', 'algorithm', 'fullstack'],
     'algorithm': ['algorithm'],
     '42seoul-course': {
@@ -69,7 +75,7 @@ repos = {
         'FullStackServiceProgramming': ['web/mobile', 'security', 'network', 'devops&publish'],
         'LatestTechnologyColloquium2': ['other'],
         'OOP': ['implement'],
-        'softwareEngineering': ['other'],
+        'SoftwareEngineering': ['other'],
     },
     'Kyunghee_2023_3Grade_First_Semester': {
         '3D_Data_Processing': ['algorithm', 'graphic'],
@@ -103,6 +109,10 @@ def get_weights(categories, weights):
     return weight_dict
 
 category_weights = {
+    'ft_irc': get_weights(repos['ft_irc'], category_len3),
+    'minishell': get_weights(repos['minishell'], category_len3),
+    'cube3d': get_weights(repos['cub3d'], category_len4),
+    'bootcamp-game-project': get_weights(repos['bootcamp-game-project'], category_len5),
     'portfolio-project': get_weights(repos['portfolio-project'], category_len5),
     'algorithm': get_weights(repos['algorithm'], category_len1),
     'libft': get_weights(repos['42seoul-course']['libft'], category_len1),
@@ -137,7 +147,7 @@ category_weights = {
     'FullStackServiceProgramming': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['FullStackServiceProgramming'], category_len5),
     'LatestTechnologyColloquium2': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['LatestTechnologyColloquium2'], category_len5),
     'OOP': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['OOP'], category_len1),
-    'softwareEngineering': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['softwareEngineering'], category_len5),
+    'SoftwareEngineering': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['SoftwareEngineering'], category_len5),
     '3D_Data_Processing': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['3D_Data_Processing'], category_len2),
     'AI_and_Game_Programming': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['AI_and_Game_Programming'], category_len2),
     'Game_Engineering': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['Game_Engineering'], category_len5),

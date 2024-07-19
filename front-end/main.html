@@ -20,6 +20,23 @@
 		cursor: zoom-in;
 	}
 </style>
+<style>
+	.scroll-container {
+		display: flex;
+		overflow-x: auto;
+		white-space: nowrap;
+		border: 1px solid #ccc;
+		padding: 10px;
+	}
+	.category-item {
+		display: inline-block;
+		margin-right: 10px;
+		padding: 5px 10px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		background-color: #f9f9f9;
+	}
+</style>
 <link rel="stylesheet" href="./dist/hystmodal.min.css">
 <script src="./dist/hystmodal.min.js"></script>
 </head>
@@ -30,14 +47,43 @@
 	</div>
 
 	<!-- basic commands -->
-	<div class="info">
-		<a onclick="cameraControls.moveTo(80, 15, 0, true); showAll();">reset position</a>
+	<div class="commands">
+		<a onclick="cameraControls.moveTo(80, 15, 0, true); showAll();">reset</a>
 		<br>
-		<a onclick="cameraControls.moveTo(-900, 0, 0, true)">go to credits</a>
-	</div>	
+		<a onclick="cameraControls.moveTo(80, 15, 0, true);">position</a>
+		<br>
+		<a onclick="cameraControls.moveTo(-900, 0, 0, true); ResetSelect()">go to credits</a>
+		<br>
+	</div>
 
-	<!-- Chatbot -->
-	<!-- <button id="showChatButton">챗봇 열기</button> -->
+	<div class="slider">
+		<a class="slider__slide" onclick="showCategoryDetail('game&simulation')">game&simulation</a>
+		<a class="slider__slide" onclick="showCategoryDetail('os')">os</a>
+		<a class="slider__slide" onclick="showCategoryDetail('optimization')">optimization</a>
+		<a class="slider__slide" onclick="showCategoryDetail('graphic')">graphic</a>
+		<a class="slider__slide" onclick="showCategoryDetail('security')">security</a>
+		<a class="slider__slide" onclick="showCategoryDetail('fullstack')">fullstack</a>
+		<a class="slider__slide" onclick="showCategoryDetail('teamTask')">teamTask</a>
+		<a class="slider__slide" onclick="showCategoryDetail('algorithm')">algorithm</a>
+		<a class="slider__slide" onclick="showCategoryDetail('cloud')">cloud</a>
+	</div>
+	<div class="slider2">
+		<a class="slider__slide" onclick="showCategoryDetail('devops&publish')">devops&publish</a>
+		<a class="slider__slide" onclick="showCategoryDetail('ai')">ai</a>
+		<a class="slider__slide" onclick="showCategoryDetail('web/mobile')">web/mobile</a>
+		<a class="slider__slide" onclick="showCategoryDetail('other')">other</a>
+		<a class="slider__slide" onclick="showCategoryDetail('database')">database</a>
+		<a class="slider__slide" onclick="showCategoryDetail('implement')">implement</a>
+		<a class="slider__slide" onclick="showCategoryDetail('backend')">backend</a>
+		<a class="slider__slide" onclick="showCategoryDetail('network')">network</a>
+		<a class="slider__slide" onclick="showCategoryDetail('frontend')">frontend</a>
+	</div>
+
+
+	<!-- category detail -->
+	
+
+
 	<div id="showChatButton">
 		<img src="./asset/images/ice-bear.png" alt="Chat Icon" />
 	</div>
@@ -51,6 +97,7 @@
             <button onclick="sendMessage()">전송</button>
         </div>
     </div>
+
 
 
 	<!-- modal by library (hystmodal) -->

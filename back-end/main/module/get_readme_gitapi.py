@@ -37,7 +37,7 @@ def get_readme(repo_all_list, OWNER_NAME, token):
 
         if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course",\
                                 "algorithm",  "java-board-web", "Kyunghee_2022_2Grade_Second_Semester",\
-                                "Kyunghee_2023_3Grade_First_Semester"]:
+                                "Kyunghee_2023_3Grade_First_Semester", "KyungHee_2023_3Grade_Second_Semester"]:
             continue
 
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
