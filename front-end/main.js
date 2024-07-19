@@ -206,11 +206,11 @@ function makeStarRoad(data) {
 		});
 
 		var sun_sphere = new THREE.Mesh(sun_geometry, sun_material);
-		var number = 3;
-		var random_pos_x = Math.random() * number - number / 2;
-		var random_pos_y = Math.random() * number - number / 2;
-		var random_pos_z = Math.random() * number - number / 2;
-		positions[i] = [positions[i][0] + random_pos_x, positions[i][1] + random_pos_y, positions[i][2] + random_pos_z];
+		// var number = 1;
+		// var random_pos_x = Math.random() * number - number / 2;
+		// var random_pos_y = Math.random() * number - number / 2;
+		// var random_pos_z = Math.random() * number - number / 2;
+		// positions[i] = [positions[i][0] + random_pos_x, positions[i][1] + random_pos_y, positions[i][2] + random_pos_z];
 
 		sun_sphere.position.set(positions[i][0] * 5, positions[i][1] * 5, positions[i][2] * 5);
 		sun_sphere.name = categories[i];
