@@ -35,10 +35,13 @@ def get_readme(repo_all_list, OWNER_NAME, token):
     current_os = platform.system()
     for repo in repo_all_list:
 
-        if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course",\
-                                "algorithm",  "java-board-web", "Kyunghee_2022_2Grade_Second_Semester",\
-                                "Kyunghee_2023_3Grade_First_Semester", "KyungHee_2023_3Grade_Second_Semester"]:
-            continue
+        # if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course",\
+        #                         "algorithm",  "java-board-web", "Kyunghee_2022_2Grade_Second_Semester",\
+        #                         "Kyunghee_2023_3Grade_First_Semester", "KyungHee_2023_3Grade_Second_Semester"\
+        #                         "42piscine", "bootcamp-game-project", "cub3d", "profpilot"\
+        #                         "cub3d_t", "minishell_t", "gvdb-fluid-unreal", "WebtoonProject",\
+        #                         "FE-study", "ft_irc_t", "fss_project"]:
+        #     continue
 
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
         headers_readme = {
@@ -62,7 +65,6 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             project_category = decoded_content.split('PROJECT_CATEGORY : ')[1].split('\n')[0],
             project_subproject = decoded_content.split('PROJECT_SUBPROJECT : ')[1].split('\n')[0]
 
-
             repo['description'] = project_description
             repo['complete_status'] = project_complete_status
             repo['multi'] = project_multi
@@ -77,10 +79,16 @@ def get_readme(repo_all_list, OWNER_NAME, token):
                     subproject_readme = get_subproject_readme(repo, sub_project, OWNER_NAME, token)
                     saveInMongo.save_repo_data_in_mongo(subproject_readme, current_os)
                     repo_all_list.append(subproject_readme)
+
+            repo['name'] = project_name[0]
+            repo['url'] = project_url[0]
             saveInMongo.save_repo_data_in_mongo(repo, current_os)
         else:
             repo["readme"] = ""
-    return repo_all_list
+    
+    data_in_mongo = saveInMongo.get_all_repos_in_mongo()
+
+    return data_in_mongo
 
 # 3. 각 repository에서 세부 파일에서 readme가 있는 경우 가져온다.
 def get_subproject_readme(repo, subproject, OWNER_NAME, token):

@@ -91,11 +91,7 @@ repos = {
         'Introduction to software convergence': ['algorithm'],
         'data structure': ['algorithm'],
     },
-    '42 piscine': {
-        'C': ['implement', 'algorithm'],
-        'Rush': ['algorithm', 'implement'],
-        'Shell': ['os'],
-    },
+    '42piscine' : ['algorithm', 'implement', 'os']
 }
 
 category_len1 = [3]
@@ -158,9 +154,7 @@ category_weights = {
     'game programming introduction': get_weights(repos['Kyunghee_2022_2Grade_Second_semester']['game programming introduction'], category_len2),
     'Introduction to software convergence': get_weights(repos['Kyunghee_2022_2Grade_Second_semester']['Introduction to software convergence'], category_len2),
     'data structure': get_weights(repos['Kyunghee_2022_2Grade_Second_semester']['data structure'], category_len2),
-    'C': get_weights(repos['42 piscine']['C'], category_len2),
-    'Rush': get_weights(repos['42 piscine']['Rush'], category_len2),
-    'Shell': get_weights(repos['42 piscine']['Shell'], category_len1),
+    '42piscine': get_weights(repos['42piscine'], category_len3),
 }
 
 # 거리 계산 함수

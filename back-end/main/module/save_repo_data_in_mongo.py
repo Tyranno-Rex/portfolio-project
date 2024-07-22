@@ -2,6 +2,26 @@ from bson import ObjectId
 from pymongo import MongoClient
 import platform
 
+
+def get_all_repos_in_mongo():
+    current_os = platform.system()
+    if current_os == 'Windows':
+        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
+    else:
+        PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
+    
+    client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
+    
+    db = client['portfolio']
+    repos = db['database']
+    
+    repo_all_list = []
+    for repo in repos.find():
+        repo_all_list.append(repo)
+    
+    client.close()
+    return repo_all_list
+
 def save_repo_data_in_mongo(repo, current_os):
     current_os = platform.system()
     if current_os == 'Windows':
