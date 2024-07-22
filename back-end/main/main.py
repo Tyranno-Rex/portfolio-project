@@ -114,10 +114,15 @@ class FASTAPI_SERVER:
     async def startup_event(self):
         log.access_log()
 
-    def get_all_repo_readme(self):
-        repo_all_list = readme.get_all_repos(self.token)
-        repo_all_list = readme.get_readme(repo_all_list, self.OWNER_NAME, self.token)
-        return repo_all_list
+    async def get_all_repo_readme(self, request: Request):
+        access_token = request.query_params.get('access_token')
+
+        if access_token != self.access_token:
+            return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+        else:
+            repo_all_list = readme.get_all_repos(self.token)
+            repo_all_list = readme.get_readme(repo_all_list, self.OWNER_NAME, self.token)
+            return JSONResponse(status_code=200, content=repo_all_list)
     
     def get_all_repo_category(self):
         repos = self.repos.find()
@@ -133,13 +138,18 @@ class FASTAPI_SERVER:
             json_repo_category['repo-category'].append({'repo': rc['repo'], 'categories': rc['categories']})
         return json_repo_category
     
-    def generate_database(self):
-        print("=====================================")
-        print("===Generate Database===")
-        gdb.generate_database()
-        print("===Save Repository Data===")
-        print("=====================================")
-        return {"status": "success"}
+    async def generate_database(self, request: Request):
+        access_token = request.query_params.get('access_token')
+        print("Access Token: ", access_token)
+        if access_token != self.access_token:
+            return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+        else :
+            return JSONResponse(status_code=200, content={"message": "Database generated successfully"})
+            print("=====================================")
+            print("===Generate Database===")
+            gdb.generate_database()
+            print("===Save Repository Data===")
+            print("=====================================")
 
     async def get_repo_info(self, request: Request):
         repo = request.query_params.get('repo')
