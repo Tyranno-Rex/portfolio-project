@@ -144,12 +144,12 @@ class FASTAPI_SERVER:
         if access_token != self.access_token:
             return JSONResponse(status_code=401, content={"error": "Unauthorized"})
         else :
-            return JSONResponse(status_code=200, content={"message": "Database generated successfully"})
             print("=====================================")
             print("===Generate Database===")
             gdb.generate_database()
             print("===Save Repository Data===")
             print("=====================================")
+            return JSONResponse(status_code=200, content={"message": "Database generated successfully"})
 
     async def get_repo_info(self, request: Request):
         repo = request.query_params.get('repo')
