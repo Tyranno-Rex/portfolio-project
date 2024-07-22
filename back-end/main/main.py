@@ -104,7 +104,6 @@ class FASTAPI_SERVER:
     def get_all_repo_readme(self):
         repo_all_list = readme.get_all_repos(self.token)
         repo_all_list = readme.get_readme(repo_all_list, self.OWNER_NAME, self.token)
-    
         return repo_all_list
     
     def get_all_repo_category(self):
@@ -122,7 +121,11 @@ class FASTAPI_SERVER:
         return json_repo_category
     
     def generate_database(self):
+        print("=====================================")
+        print("===Generate Database===")
         gdb.generate_database()
+        print("===Save Repository Data===")
+        print("=====================================")
         return {"status": "success"}
 
     async def get_repo_info(self, request: Request):

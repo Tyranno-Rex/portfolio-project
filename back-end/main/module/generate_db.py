@@ -4,6 +4,8 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 import platform
 
+category_weight = [3, 2, 2, 2, 2]
+
 # 카테고리 좌표
 category_coords = {
     'game&simulation':  np.array([-3, -5, -8]),
@@ -28,134 +30,10 @@ category_coords = {
     'frontend':         np.array([3, 5, 8]),
 }
 
-# 레포지토리 데이터
-
-
-repos = {
-    'ft_irc': ['network', 'implement', 'teamTask'],
-    'minishell': ['implement', 'os', 'teamTask'],
-    'cub3d' : ['graphic', 'game&simulation', 'algorithm', 'teamTask'],
-    'bootcamp-game-project' : ['game&simulation', 'web/mobile', 'ai', 'security', 'teamTask'],
-    'portfolio-project': ['graphic', 'ai', 'web/mobile', 'algorithm', 'fullstack'],
-    'algorithm': ['algorithm'],
-    '42seoul-course': {
-        'libft': ['implement'],
-        'ft_printf': ['implement'],
-        'get_next_line': ['implement'],
-        'Born2BeRoot': ['os', 'implement', 'security', 'network'],
-        'exam_rank02' : ['implement'],
-        'minitalk': ['network', 'implement'],
-        'so_long': ['game&simulation', 'implement'],
-        'push_swap': ['algorithm', 'implement', 'optimization'],
-        'exam_rank03': ['implement'],
-        'minishell': ['implement', 'os', 'teamTask'],
-        'philosophers': ['os', 'implement', 'optimization'],
-        'exam_rank04': ['implement'],
-        'netpractice': ['network'],
-        'CPPModule4': ['implement'],
-        'cub3d': ['graphic', 'game&simulation', 'algorithm', 'teamTask'],
-        'CPPModule9': ['implement'],
-        'ft_irc': ['network', 'implement', 'teamTask'],
-    },
-    'fss_project': ['web/mobile', 'security', 'network', 'devops&publish', 'fullstack'],
-    'java-board-web': ['web/mobile', 'security', 'fullstack'],
-    'BE-study': {
-        'study-database': ['database'],
-        'study-os': ['os'],
-        'study-server': ['ai', 'network', 'backend', 'implement', 'cloud'],
-    },
-    'FE-study': ['frontend', 'web/mobile'],
-    'profpilot': ['web/mobile', 'security', 'network', 'devops&publish'],
-    'gvdb-fluid-unreal': ['game&simulation', 'optimization', 'algorithm', 'teamTask', 'graphic'],
-    'webtoonProject': ['web/mobile'],
-    'KyungHee_2023_3Grade_Second_Semester': {
-        'Algorithm': ['algorithm'],
-        'ComputerNetwork': ['network'],
-        'Database': ['database'],
-        'FullStackServiceProgramming': ['web/mobile', 'security', 'network', 'devops&publish'],
-        'LatestTechnologyColloquium2': ['other'],
-        'OOP': ['implement'],
-        'SoftwareEngineering': ['other'],
-    },
-    'Kyunghee_2023_3Grade_First_Semester': {
-        '3D_Data_Processing': ['algorithm', 'graphic'],
-        'AI_and_Game_Programming': ['ai', 'algorithm'],
-        'Game_Engineering': ['game&simulation', 'optimization', 'algorithm', 'teamTask', 'graphic'],
-        'Game_Graphics_Programming': ['graphic'],
-        'OpenSource_SW_Development_Methods_and_Tools': ['os', 'other'],
-        'Operating_System': ['os'],
-    },
-    'Kyunghee_2022_2Grade_Second_semester': {
-        'game engine basic': ['game&simulation', 'teamTask'],
-        'game programming introduction': ['algorithm', 'implement'],
-        'Introduction to software convergence': ['algorithm'],
-        'data structure': ['algorithm'],
-    },
-    '42piscine' : ['algorithm', 'implement', 'os']
-}
-
-category_len1 = [3]
-category_len2 = [3, 2]
-category_len3 = [3, 2, 2]
-category_len4 = [3, 2, 2, 2]
-category_len5 = [3, 2, 2, 2, 2]
 
 def get_weights(categories, weights):
     weight_dict = {category: weight for category, weight in zip(categories, weights)}
     return weight_dict
-
-category_weights = {
-    'ft_irc': get_weights(repos['ft_irc'], category_len3),
-    'minishell': get_weights(repos['minishell'], category_len3),
-    'cube3d': get_weights(repos['cub3d'], category_len4),
-    'bootcamp-game-project': get_weights(repos['bootcamp-game-project'], category_len5),
-    'portfolio-project': get_weights(repos['portfolio-project'], category_len5),
-    'algorithm': get_weights(repos['algorithm'], category_len1),
-    'libft': get_weights(repos['42seoul-course']['libft'], category_len1),
-    'ft_printf': get_weights(repos['42seoul-course']['ft_printf'], category_len1),
-    'get_next_line': get_weights(repos['42seoul-course']['get_next_line'], category_len1),
-    'Born2BeRoot': get_weights(repos['42seoul-course']['Born2BeRoot'], category_len4),
-    'minitalk': get_weights(repos['42seoul-course']['minitalk'], category_len2),
-    'so_long': get_weights(repos['42seoul-course']['so_long'], category_len2),
-    'push_swap': get_weights(repos['42seoul-course']['push_swap'], category_len4),
-    'minishell': get_weights(repos['42seoul-course']['minishell'], category_len4),
-    'philosophers': get_weights(repos['42seoul-course']['philosophers'], category_len4),
-    'netpractice': get_weights(repos['42seoul-course']['netpractice'], category_len1),
-    'CPPModule4': get_weights(repos['42seoul-course']['CPPModule4'], category_len1),
-    'cub3d': get_weights(repos['42seoul-course']['cub3d'], category_len4),
-    'CPPModule9': get_weights(repos['42seoul-course']['CPPModule9'], category_len1),
-    'ft_irc': get_weights(repos['42seoul-course']['ft_irc'], category_len4),
-    'exam_rank02': get_weights(repos['42seoul-course']['exam_rank02'], category_len1),
-    'exam_rank03': get_weights(repos['42seoul-course']['exam_rank03'], category_len1),
-    'exam_rank04': get_weights(repos['42seoul-course']['exam_rank04'], category_len1),
-    'fss_project': get_weights(repos['fss_project'], category_len5),
-    'java-board-web': get_weights(repos['java-board-web'], category_len5),
-    'study-database': get_weights(repos['BE-study']['study-database'], category_len1),
-    'study-os': get_weights(repos['BE-study']['study-os'], category_len1),
-    'study-server': get_weights(repos['BE-study']['study-server'], category_len5),
-    'FE-study': get_weights(repos['FE-study'], category_len5),
-    'profpilot': get_weights(repos['profpilot'], category_len5),
-    'gvdb-fluid-unreal': get_weights(repos['gvdb-fluid-unreal'], category_len5),
-    'webtoonProject': get_weights(repos['webtoonProject'], category_len5),
-    'Algorithm': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['Algorithm'], category_len1),
-    'ComputerNetwork': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['ComputerNetwork'], category_len1),
-    'Database': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['Database'], category_len1),
-    'FullStackServiceProgramming': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['FullStackServiceProgramming'], category_len5),
-    'LatestTechnologyColloquium2': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['LatestTechnologyColloquium2'], category_len5),
-    'OOP': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['OOP'], category_len1),
-    'SoftwareEngineering': get_weights(repos['KyungHee_2023_3Grade_Second_Semester']['SoftwareEngineering'], category_len5),
-    '3D_Data_Processing': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['3D_Data_Processing'], category_len2),
-    'AI_and_Game_Programming': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['AI_and_Game_Programming'], category_len2),
-    'Game_Engineering': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['Game_Engineering'], category_len5),
-    'Game_Graphics_Programming': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['Game_Graphics_Programming'], category_len1),
-    'OpenSource_SW_Development_Methods_and_Tools': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['OpenSource_SW_Development_Methods_and_Tools'], category_len2),
-    'Operating_System': get_weights(repos['Kyunghee_2023_3Grade_First_Semester']['Operating_System'], category_len1),
-    'game engine basic': get_weights(repos['Kyunghee_2022_2Grade_Second_semester']['game engine basic'], category_len2),
-    'game programming introduction': get_weights(repos['Kyunghee_2022_2Grade_Second_semester']['game programming introduction'], category_len2),
-    'Introduction to software convergence': get_weights(repos['Kyunghee_2022_2Grade_Second_semester']['Introduction to software convergence'], category_len2),
-    'data structure': get_weights(repos['Kyunghee_2022_2Grade_Second_semester']['data structure'], category_len2),
-    '42piscine': get_weights(repos['42piscine'], category_len3),
-}
 
 # 거리 계산 함수
 def weighted_distance(repo_pos, categories, weights):
@@ -164,6 +42,7 @@ def weighted_distance(repo_pos, categories, weights):
         weight = weights.get(category, 1)  # 기본 가중치를 1로 설정
         category_pos = category_coords[category]
         distance += weight * np.linalg.norm(repo_pos - category_pos)
+
     return distance
 
 # 최적의 위치 계산 함수
@@ -173,28 +52,14 @@ def find_optimal_location(categories, weights):
     return result.x
 
 def generate_database():
-    # 레포지토리 별 최적의 위치 계산
-    repo_optimal_locations = {}
-    for repo, categories in repos.items():
-        if isinstance(categories, dict):
-            repo_optimal_locations[repo] = {}
-            for sub_repo, sub_categories in categories.items():
-                weights = category_weights[sub_repo]
-                optimal_location = find_optimal_location(sub_categories, weights)
-                repo_optimal_locations[repo][sub_repo] = optimal_location
-        else:
-            weights = category_weights[repo]
-            optimal_location = find_optimal_location(categories, weights)
-            repo_optimal_locations[repo] = optimal_location
 
+    
     current_os = platform.system()
     if current_os == 'Windows':
         PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
     else:
         PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
-    
     client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
-
     try:
         # 연결 테스트
         client.admin.command('ismaster')
@@ -202,28 +67,39 @@ def generate_database():
     except ConnectionFailure:
         print('MongoDB server not available')
 
+    # 데이터베이스, 컬렉션 로드
     db = client['portfolio']
+    database = db['database']
     collection  = db['repo-positions']
     collection2 = db['category-positions']
     collection3 = db['repo-category']
 
+    # 레포지토리 별 카테고리 가중치 계산
+    get_category_weights = {}
+    for db in database.find():
+        category_list = db['category'].split(', ')
+        for i in range(len(category_list)):
+            category_list[i] = category_list[i].replace("'", "")
+        get_category_weights[db['name']] = get_weights(category_list, category_weight)
+
+    # 레포지토리 별 최적의 위치 계산
+    repo_optimal_locations = {}
+    for repo, categories in get_category_weights.items():
+        weights = get_category_weights[repo]
+        if 'NONE' in categories:
+            continue
+        optimal_location = find_optimal_location(categories, weights)
+        repo_optimal_locations[repo] = optimal_location
+
     # 레포지토리 위치 저장
     for repo, position in repo_optimal_locations.items():
-        if isinstance(position, dict):
-            for sub_repo, sub_position in position.items():
-                collection.insert_one({'repo': f'{repo}/{sub_repo}', 'position': sub_position.tolist()})
-        else:
-            collection.insert_one({'repo': repo, 'position': position.tolist()})
+        collection.insert_one({'repo': repo, 'position': position.tolist()})
 
     for category, coord in category_coords.items():
         collection2.insert_one({'category': category, 'position': coord.tolist()})
-        
-
-    for repo, categories in repos.items():
-        if isinstance(categories, dict):
-            for sub_repo, sub_categories in categories.items():
-                collection3.insert_one({'repo': f'{repo}/{sub_repo}', 'categories': sub_categories})
-        else:
-            collection3.insert_one({'repo': repo, 'categories': categories})
-
+    
+    for repo, categories in get_category_weights.items():
+        # array 로 들어가게 수정
+        categories = list(categories.keys())
+        collection3.insert_one({'repo': repo, 'categories': categories})
     client.close()

@@ -2,7 +2,7 @@
 from requests import get
 import base64
 import platform
-
+import pydantic
 from module import save_repo_data_in_mongo as saveInMongo
 
 # 1. 모든 repository의 이름과 url을 가져온다.
@@ -35,14 +35,6 @@ def get_readme(repo_all_list, OWNER_NAME, token):
     current_os = platform.system()
     for repo in repo_all_list:
 
-        # if repo["name"] not in ["BE-study", "portfolio-project", "42seoul-course",\
-        #                         "algorithm",  "java-board-web", "Kyunghee_2022_2Grade_Second_Semester",\
-        #                         "Kyunghee_2023_3Grade_First_Semester", "KyungHee_2023_3Grade_Second_Semester"\
-        #                         "42piscine", "bootcamp-game-project", "cub3d", "profpilot"\
-        #                         "cub3d_t", "minishell_t", "gvdb-fluid-unreal", "WebtoonProject",\
-        #                         "FE-study", "ft_irc_t", "fss_project"]:
-        #     continue
-
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
         headers_readme = {
             "Accept": "application/vnd.github+json",
@@ -57,6 +49,10 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             encoded_content = json_readme["content"]
             decoded_content = decode_base64(encoded_content)
             repo["readme"] = decoded_content
+
+
+            # 해당 내용에서 \r을 모두 제거
+            decoded_content = decoded_content.replace('\r', '')
             project_name = decoded_content.split('PROJECT_NAME : ')[1].split('\n')[0],
             project_description = decoded_content.split('PROJECT_DESCRIPTION : ')[1].split('\n')[0],
             project_url = decoded_content.split('PROJECT_URL : ')[1].split('\n')[0],
@@ -68,7 +64,7 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             repo['description'] = project_description
             repo['complete_status'] = project_complete_status
             repo['multi'] = project_multi
-            project_category = project_category[0].split(', ')
+            project_category = project_category[0]
             repo['category'] = project_category
             project_subproject = project_subproject.split(', ')
             repo['subproject'] = project_subproject
@@ -86,6 +82,7 @@ def get_readme(repo_all_list, OWNER_NAME, token):
         else:
             repo["readme"] = ""
     
+    # pydantic.json.ENCODERS_BY_TYPE[ObjectId] = str
     data_in_mongo = saveInMongo.get_all_repos_in_mongo()
 
     return data_in_mongo
