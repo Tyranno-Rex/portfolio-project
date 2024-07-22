@@ -98,7 +98,7 @@ pipeline {
         stage('Docker Run') {
             steps {
                 sh "docker run -d --network docker-network -p 19999:80 --name front-container frontend-image-docker"
-                sh "docker run -d --network docker-network -p 8000:8000 -v /home/git-token.txt:/app/git-token.txt -v /home/mongo-token.txt:/app/mongo-token.txt --name back-container backend-image-docker"
+                sh "docker run -d --network docker-network -p 8000:8000 -v /home/git-token.txt:/app/git-token.txt -v /home/mongo-token.txt:/app/mongo-token.txt -v /home/access-token.txt:/app/access-token.txt --name back-container backend-image-docker"
             }
         }
     }

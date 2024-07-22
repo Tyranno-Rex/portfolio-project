@@ -65,6 +65,19 @@ class FASTAPI_SERVER:
             print("MongoDB Connection Error: ", e)
             print("=====================================")
 
+
+        # access-token 설정
+        print("=====================================")
+        print("Access Token Setting")
+        if self.current_os == 'Windows':
+            self.access_token = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-access-token.txt", "r").read().strip()
+        else:
+            self.access_token = open("/app/access-token.txt", "r").read().strip()
+        print("Access Token: ", self.access_token)
+        print("Access Token Setting Complete")
+        print("=====================================")
+
+
         print("=====================================")
         print("FastAPI Server Setting")
         # FastAPI 이벤트 설정

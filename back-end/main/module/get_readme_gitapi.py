@@ -34,22 +34,18 @@ def decode_base64(content):
 def get_readme(repo_all_list, OWNER_NAME, token):
     current_os = platform.system()
     for repo in repo_all_list:
-
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
         headers_readme = {
             "Accept": "application/vnd.github+json",
             "Authorization": f"Bearer {token}",
             "X-GitHub-Api-Version": "2022-11-28"
         }
-
         response_readme = get(url_readme, headers=headers_readme)
-
         if response_readme.status_code == 200:
             json_readme = response_readme.json()
             encoded_content = json_readme["content"]
             decoded_content = decode_base64(encoded_content)
             repo["readme"] = decoded_content
-
 
             # 해당 내용에서 \r을 모두 제거
             decoded_content = decoded_content.replace('\r', '')
@@ -81,8 +77,6 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             saveInMongo.save_repo_data_in_mongo(repo, current_os)
         else:
             repo["readme"] = ""
-    
-    # pydantic.json.ENCODERS_BY_TYPE[ObjectId] = str
     data_in_mongo = saveInMongo.get_all_repos_in_mongo()
 
     return data_in_mongo

@@ -52,8 +52,6 @@ def find_optimal_location(categories, weights):
     return result.x
 
 def generate_database():
-
-    
     current_os = platform.system()
     if current_os == 'Windows':
         PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
