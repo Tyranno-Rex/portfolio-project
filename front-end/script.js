@@ -35,11 +35,3 @@ function closeChat() {
 document.getElementById('showChatButton').addEventListener('click', showChat);
 document.getElementById('closeChatButton').addEventListener('click', closeChat);
 window.sendMessage = sendMessage;
-
-
-
-
-"use strict";
-const leftArrow = document.querySelector(".left-arrow"),
-  rightArrow = document.querySelector(".right-arrow"),
-  slider = document.querySelector(".slider");
