@@ -84,6 +84,7 @@ class FASTAPI_SERVER:
         self.app.add_event_handler("startup", self.startup_event)
         # FastAPI 라우터 설정
         self.router = APIRouter()
+        self.router.add_api_route('/', endpoint=self.check_server, methods=['GET'])
         self.router.add_api_route('/readme', endpoint=self.get_all_repo_readme, methods=['GET'])
         self.router.add_api_route('/repo-category', endpoint=self.get_all_repo_category, methods=['GET'])
         self.router.add_api_route('/generate-database', endpoint=self.generate_database, methods=['GET'])
@@ -110,6 +111,9 @@ class FASTAPI_SERVER:
         except Exception as e:
             print("Token Error: ", e)
             print("=====================================")
+
+    async def check_server(self):
+        return JSONResponse(status_code=200, content={"message": "Server is running"})
 
     async def startup_event(self):
         log.access_log()
