@@ -163,10 +163,6 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-// fetch("http://localhost:8000/repo-category")
-// fetch("http://192.168.3.3:8000/repo-category")
-// fetch("http://172.18.0.3:8000/repo-category")
-// fetch("https://43.202.167.77:8000/repo-category")
 fetch("https://jeongeunseong.site/repo-category")
 .then((response) => {
 	if (!response.ok) {
@@ -459,8 +455,6 @@ function onMouseClick(event) {
 			}
 		});
 		
-		// fetch("https://jeongeunseong.site/repo-category")
-		// fetch(`http://43.202.167.77:8000/get-repo-info?repo=${repo}`)
 		fetch("https://jeongeunseong.site/get-repo-info?repo=" + repo)
 		.then((response) => {
 			if (!response.ok) {
