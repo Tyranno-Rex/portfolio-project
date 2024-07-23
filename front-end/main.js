@@ -455,7 +455,7 @@ function onMouseClick(event) {
 			}
 		});
 		
-		fetch("https://jeongeunseong.site/get-repo-info?repo=" + repo)
+		fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
@@ -464,7 +464,6 @@ function onMouseClick(event) {
 		})
 		.then((data) => {
 			document.getElementById('modal-content').innerHTML = `Information about ${repo}<br>${data}`;
-			// {name: 'libft', url: "'https://github.com/Tyranno-Rex/42seoul-course/tree/main/libft'", readme: "```markdown\n# Libft\n\nLibft is a custom implementat…tion.so/0-libft-5eac5697c9f340a28a47601182c109cb'", description: 'A custom implementation of standard C library func…nd create a reusable library for future projects.', complete_status: 'TRUE', …}
 			var get_name = data.name;
 			var get_url = data.url;
 			var get_readme = data.readme;
