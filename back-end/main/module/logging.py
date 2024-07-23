@@ -8,6 +8,10 @@ import pytz
 
 def save_log_to_mongodb(log_message):
     try:
+        # 10.0.0.199 / 10.0.1.195 은 health check용 IP -> 로그 저장하지 않음
+        if "10.0.0.199" in log_message or "10.0.1.195" in log_message:
+            return
+
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         utc_now = datetime.datetime.now(datetime.timezone.utc)
 
