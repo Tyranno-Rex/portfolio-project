@@ -4,6 +4,7 @@ import base64
 import platform
 import pydantic
 from module import save_repo_data_in_mongo as saveInMongo
+import datetime
 
 # 1. 모든 repository의 이름과 url을 가져온다.
 def get_all_repos(token):
@@ -64,6 +65,8 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             repo['category'] = project_category
             project_subproject = project_subproject.split(', ')
             repo['subproject'] = project_subproject
+            repo['updated_at'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            repo['generate_txt_gpt'] = False
         
             multi = project_multi[0]
             if multi == 'TRUE':
@@ -78,7 +81,6 @@ def get_readme(repo_all_list, OWNER_NAME, token):
         else:
             repo["readme"] = ""
     data_in_mongo = saveInMongo.get_all_repos_in_mongo()
-
     return data_in_mongo
 
 # 3. 각 repository에서 세부 파일에서 readme가 있는 경우 가져온다.
@@ -104,6 +106,7 @@ def get_subproject_readme(repo, subproject, OWNER_NAME, token):
             sub_project_multi = decoded_content.split('PROJECT_MULTI : ')[1].split('\n')[0]
             sub_project_category = decoded_content.split('PROJECT_CATEGORY : ')[1].split('\n')[0]
             sub_project_subproject = decoded_content.split('PROJECT_SUBPROJECT : ')[1].split('\n')[0]
+            sub_project_updated_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             return {
                 "name": sub_project_name,
                 "url": sub_project_url,
@@ -112,5 +115,7 @@ def get_subproject_readme(repo, subproject, OWNER_NAME, token):
                 "complete_status": sub_project_complete_status,
                 "multi": sub_project_multi,
                 "category": sub_project_category,
-                "subproject": sub_project_subproject
+                "subproject": sub_project_subproject,
+                "updated_at": sub_project_updated_at,
+                "generate_txt_gpt": False
             }

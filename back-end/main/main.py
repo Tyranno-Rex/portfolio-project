@@ -98,7 +98,7 @@ class FASTAPI_SERVER:
             print("Token Setting")
             if self.current_os == 'Windows':
                 print("DEBUG")
-                self.token = open("./back-end/main/database/password-git-token.txt", "r").read().strip()
+                self.token = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-git-token.txt", "r").read().strip()
             else:
                 print("RELEASE")
                 try:
