@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import * as holdEvent from "https://unpkg.com/hold-event@0.2.0/dist/hold-event.module.js";
 import CameraControls from './dist/camera-controls.module.js';
+// marked.js를 사용하기 위해 import
 CameraControls.install( { THREE: THREE } );
 
 const width = window.innerWidth;
@@ -163,6 +164,8 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
+
+// fetch("http://192.168.3.3:8000/repo-category")
 fetch("https://jeongeunseong.site/repo-category")
 .then((response) => {
 	if (!response.ok) {
@@ -455,6 +458,7 @@ function onMouseClick(event) {
 			}
 		});
 		
+		// fetch("http://192.168.3.3:8000/get-repo-info?repo=" + repo)
 		fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
 		.then((response) => {
 			if (!response.ok) {
@@ -463,25 +467,34 @@ function onMouseClick(event) {
 			return response.json();
 		})
 		.then((data) => {
-			document.getElementById('modal-content').innerHTML = `Information about ${repo}<br>${data}`;
 			var get_name = data.name;
-			var get_url = data.url;
+			// var get_url = data.url; 양 끝에 ''를 제거
+			var get_url = data.url.slice(8, -1);
+			console.log(get_url);
 			var get_readme = data.readme;
 			var get_description = data.description;
 			var get_complete_status = data.complete_status;
 			var get_multi = data.multi;
 			var get_subproject = data.subproject;
-			
-			document.getElementById('modal-content').innerHTML = `Information about ${repo}<br>name: ${get_name}<br>url: ${get_url}<br>readme: ${get_readme}<br>description: ${get_description}<br>complete_status: ${get_complete_status}<br>multi: ${get_multi}<br>subproject: ${get_subproject}`;
-			myModal.open('#myModal');
+			const modalContent = `
+				<div class="detail-title">Information about ${repo}</div><br>
+				<div class="detail-name">Name: ${get_name}</div><br>
+				<div class="detail-url">URL: <a href=https://${get_url} target="_blank">https:/${get_url}</a></div><br>
+				<div class="detail-description">Description: ${get_description}</div><br>
+				<div class="detail-complete-status">Complete Status: ${get_complete_status}</div><br>
+				<div class="detail-multi">Multi: ${get_multi}</div><br>
+				<div class="detail-subproject">Subproject: ${get_subproject}</div><br>
+			`;
+			document.getElementById('modal-content').innerHTML = modalContent;
+			const readme = `${get_readme}`;
+			const htmlReadme = marked.parse(readme);
+			document.getElementById('modal-content').innerHTML += htmlReadme;
 		})
 		.catch((error) => {
 			console.error('There has been a problem with your fetch operation:', error);
 		});
 		
-        document.getElementById('modal-content').innerHTML = `Information about ${repo}`;
-        myModal.open('#myModal');
-
+		myModal.open('#myModal');
 
 		const target = intersects2[0].object.position;
 		cameraControls.moveTo(target.x, target.y, target.z, true);
