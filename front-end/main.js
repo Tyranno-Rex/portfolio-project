@@ -165,8 +165,13 @@ function getRandomColor() {
 }
 
 
+<<<<<<< Updated upstream
 // fetch("http://192.168.3.3:8000/repo-category")
 fetch("https://jeongeunseong.site:8000/repo-category")
+=======
+// fetch("https://jeongeunseong.site/repo-category")
+fetch("http://192.168.3.3:8000/repo-category")
+>>>>>>> Stashed changes
 .then((response) => {
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
@@ -458,8 +463,8 @@ function onMouseClick(event) {
 			}
 		});
 		
-		// fetch("http://192.168.3.3:8000/get-repo-info?repo=" + repo)
-		fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
+		// fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
+		fetch("http://192.168.3.3:8000/get-repo-info?repo=" + repo)
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
@@ -486,7 +491,7 @@ function onMouseClick(event) {
 				<div class="detail-subproject">Subproject: ${get_subproject}</div><br>
 			`;
 			document.getElementById('modal-content').innerHTML = modalContent;
-			const readme = `${get_readme}`;
+			const readme = `<div class="detail-readme">${get_readme}</div><br>`;
 			const htmlReadme = marked.parse(readme);
 			document.getElementById('modal-content').innerHTML += htmlReadme;
 		})

@@ -292,3 +292,141 @@ label {
     align-items: center;
     scroll-snap-align: start;
 }
+
+
+.detail-title {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'komikax';
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.detail-name,
+.detail-url,
+.detail-description,
+.detail-complete-status,
+.detail-multi,
+.detail-readme,
+.detail-subproject {
+    font-size: 18px;
+    font-family: 'komikax';
+    color: #555;
+    margin: 10px 0;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.detail-url a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.detail-url a:hover {
+    text-decoration: underline;
+}
+
+.detail-name span,
+.detail-url span,
+.detail-description span,
+.detail-complete-status span,
+.detail-multi span,
+.detail-subproject span {
+    font-weight: bold;
+}
+
+.detail-name::before,
+.detail-url::before,
+.detail-description::before,
+.detail-complete-status::before,
+.detail-multi::before,
+.detail-subproject::before {
+    content: '• ';
+    color: #007bff;
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+.hystmodal__close {
+    position: absolute;
+
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+} 
+
+.hystmodal__close::before, 
+.hystmodal__close::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background-color: #333;
+}
+
+.hystmodal__close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.hystmodal__close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.hystmodal__close:hover::before,
+.hystmodal__close:hover::after {
+    background-color: #ff0000;
+}
+
+.hystmodal__close:focus::before,
+.hystmodal__close:focus::after {
+    background-color: #ff0000;
+}
+
+
+@keyframes rainbowBorder {
+    0% {
+        border-color: red;
+    }
+    16.67% {
+        border-color: orange;
+    }
+    33.33% {
+        border-color: yellow;
+    }
+    50% {
+        border-color: green;
+    }
+    66.67% {
+        border-color: blue;
+    }
+    83.33% {
+        border-color: indigo;
+    }
+    100% {
+        border-color: violet;
+    }
+}
+
+#myModal {
+    padding: 20px;
+    border: 5px solid;
+    animation: rainbowBorder 5s linear infinite;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 10px;
+    margin: auto;
+    /* width: 600px; */
+    /* position: absolute; */
+    /* max-width: 600px; */
+}
+
+#myModal .modal-content {
+    padding: 20px;
+}
