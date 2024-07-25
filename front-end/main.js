@@ -165,13 +165,8 @@ function getRandomColor() {
 }
 
 
-<<<<<<< Updated upstream
 // fetch("http://192.168.3.3:8000/repo-category")
-fetch("https://jeongeunseong.site:8000/repo-category")
-=======
-// fetch("https://jeongeunseong.site/repo-category")
-fetch("http://192.168.3.3:8000/repo-category")
->>>>>>> Stashed changes
+fetch("https://jeongeunseong.site/repo-category")
 .then((response) => {
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
@@ -463,8 +458,8 @@ function onMouseClick(event) {
 			}
 		});
 		
-		// fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
-		fetch("http://192.168.3.3:8000/get-repo-info?repo=" + repo)
+		// fetch("http://192.168.3.3:8000/get-repo-info?repo=" + repo)
+		fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
