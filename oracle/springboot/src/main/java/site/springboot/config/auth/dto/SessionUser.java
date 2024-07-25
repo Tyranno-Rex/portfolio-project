@@ -1,7 +1,7 @@
 package site.springboot.config.auth.dto;
 
 import lombok.Getter;
-import site.springboot.user.entities.User;
+import site.springboot.user.User;
 
 import java.io.Serializable;
 

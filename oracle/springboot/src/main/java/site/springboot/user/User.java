@@ -1,4 +1,4 @@
-package site.springboot.user.entities;
+package site.springboot.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.springboot.user.enums.Role;
 
 @Entity
 @Getter

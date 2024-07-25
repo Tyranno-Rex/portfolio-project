@@ -2,8 +2,8 @@ package site.springboot.config.auth.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import site.springboot.user.entities.User;
-import site.springboot.user.enums.Role;
+import site.springboot.user.User;
+import site.springboot.user.Role;
 
 import java.util.Map;
 

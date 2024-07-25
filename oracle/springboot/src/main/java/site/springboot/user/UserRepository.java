@@ -1,7 +1,6 @@
-package site.springboot.user.repositories;
+package site.springboot.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import site.springboot.user.entities.User;
 
 import java.util.Optional;
 
