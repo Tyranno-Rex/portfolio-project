@@ -106,7 +106,6 @@ label {
 	cursor: pointer;
 }
 
-
 #chatBubbleText {
     font-family: 'komikax';
     color: white;
@@ -176,6 +175,62 @@ label {
     object-fit: cover; /* 비율 유지하며 잘리도록 */
 }
 
+#showIndicatorButton {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+
+    top: calc(0% + 30px);
+    right: calc(0% + 30px);
+
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+
+#showIndicatorButton img {
+    width: 100%; /* 이미지가 버튼을 꽉 채우도록 */
+    height: 100%; /* 이미지가 버튼을 꽉 채우도록 */
+    object-fit: cover; /* 비율 유지하며 잘리도록 */
+}
+
+#repo-indicator-close {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    font-size: 20px;
+    font-family: 'komikax';
+    color: white;
+    cursor: pointer;
+    display: none;
+}
+
+.repo-indicator-container {
+    position: absolute;
+    top: 35px; 
+    right: 10px; 
+    width: 200px; 
+    height: 300px; 
+
+    overflow-y: scroll; 
+    overflow-x: hidden; 
+    cursor: pointer; 
+    background-color: transparent; 
+    border: 1px solid #ccc; 
+    padding: 10px; 
+    font-family: 'komikax';
+    color: white;
+    display: none;
+}
+
+.repo-indicator {
+    margin-bottom: 5px; /* 항목 사이에 간격을 줄 수 있습니다 */
+}
+
 #closeChatButton {
     position: absolute;
     right: 15px;
@@ -201,7 +256,6 @@ label {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    display: flex;
     flex-direction: column;
 
     top: calc(100% - 500px); 

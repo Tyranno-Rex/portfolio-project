@@ -320,6 +320,14 @@ function makeStarRoad(data) {
     }
 	
 	scene.add(orbitSystem);
+
+	var repoNameList = "";
+
+	for (var i = 0; i < repoObjects.length; i++) {
+		repoNameList += "<div class='repo-indicator' onclick='ShowRepoFunc(\"" + repoObjects[i].name + "\")'>" + repoObjects[i].name + "</div>";
+	}
+	document.getElementsByClassName('repo-indicator-container')[0].innerHTML = repoNameList;
+	
 }
 
 function updateRepos() {
@@ -378,6 +386,78 @@ function updateRepos() {
     });
 }
 
+function ShowRepoFunc(repo_name) {
+	repoObjects.forEach(repo => {
+		if (repo.mesh.name == repo_name) {
+			repo.mesh.visible = true;
+		} else {
+			repo.mesh.visible = false;
+		}
+	});
+
+	// 해당 repo의 궤도를 보여준다.
+	orbitSystem.children.forEach(orbit => {
+		if (orbit.material.name == repo_name) {
+			orbit.material.visible = true;
+		} else {
+			orbit.material.visible = false;
+		}
+	});
+
+	// 해당 repo와 연결된 category들을 보여준다.
+	var repo = repo_name;
+	orbitControls.forEach(orbitControl => {
+		if (repoAndCategory.find(x => x.repo == repo).categories.includes(orbitControl.sun)) {
+			scene.getObjectByName(orbitControl.sun).visible = true;
+			SelectedCategory.push(orbitControl.sun);
+		} else {
+			scene.getObjectByName(orbitControl.sun).visible = false;
+		}
+	});
+	
+	// fetch("http://192.168.3.3:8000/get-repo-info?repo=" + repo)
+	fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
+	.then((response) => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	})
+	.then((data) => {
+		var get_name = data.name;
+		// var get_url = data.url; 양 끝에 ''를 제거
+		var get_url = data.url.slice(8, -1);
+		var get_readme = data.readme;
+		var get_description = data.description;
+		var get_complete_status = data.complete_status;
+		var get_multi = data.multi;
+		var get_subproject = data.subproject;
+		const modalContent = `
+			<div class="detail-title">Information about ${repo}</div><br>
+			<div class="detail-name">Name: ${get_name}</div><br>
+			<div class="detail-url">URL: <a href=https://${get_url} target="_blank">https:/${get_url}</a></div><br>
+			<div class="detail-description">Description: ${get_description}</div><br>
+			<div class="detail-complete-status">Complete Status: ${get_complete_status}</div><br>
+			<div class="detail-multi">Multi: ${get_multi}</div><br>
+			<div class="detail-subproject">Subproject: ${get_subproject}</div><br>
+		`;
+		document.getElementById('modal-content').innerHTML = modalContent;
+		const readme = `<div class="detail-readme">${get_readme}</div><br>`;
+		const htmlReadme = marked.parse(readme);
+		document.getElementById('modal-content').innerHTML += htmlReadme;
+	})
+	.catch((error) => {
+		console.error('There has been a problem with your fetch operation:', error);
+	});
+	
+	myModal.open('#myModal');
+
+	const target = repoObjects.find(x => x.name == repo_name).mesh.position;
+	cameraControls.moveTo(target.x, target.y, target.z, true);
+
+	showRepoName(repo_name);
+}
+
 // 2. MOUSE EVENT
 function onMouseClick(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -390,6 +470,7 @@ function onMouseClick(event) {
 		ResetClick(true, false);
 
 		WindowChange = true;
+
 		const target = intersects[0].object.position;
         cameraControls.moveTo(target.x, target.y, target.z, true);
 
@@ -430,76 +511,8 @@ function onMouseClick(event) {
 		ResetClick(false, true);
 		WindowChange = true;
 		// 해당 repo가 아닌 다른 repo들을 숨긴다.
-		repoObjects.forEach(repo => {
-			if (repo.mesh.name == intersects2[0].object.name) {
-				repo.mesh.visible = true;
-			} else {
-				repo.mesh.visible = false;
-			}
-		});
 
-		// 해당 repo의 궤도를 보여준다.
-		orbitSystem.children.forEach(orbit => {
-			if (orbit.material.name == intersects2[0].object.name) {
-				orbit.material.visible = true;
-			} else {
-				orbit.material.visible = false;
-			}
-		});
-
-		// 해당 repo와 연결된 category들을 보여준다.
-		var repo = intersects2[0].object.name;
-		orbitControls.forEach(orbitControl => {
-			if (repoAndCategory.find(x => x.repo == repo).categories.includes(orbitControl.sun)) {
-				scene.getObjectByName(orbitControl.sun).visible = true;
-				SelectedCategory.push(orbitControl.sun);
-			} else {
-				scene.getObjectByName(orbitControl.sun).visible = false;
-			}
-		});
-		
-		// fetch("http://192.168.3.3:8000/get-repo-info?repo=" + repo)
-		fetch("https://jeongeunseong.site:8000/get-repo-info?repo=" + repo)
-		.then((response) => {
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
-			}
-			return response.json();
-		})
-		.then((data) => {
-			var get_name = data.name;
-			// var get_url = data.url; 양 끝에 ''를 제거
-			var get_url = data.url.slice(8, -1);
-			console.log(get_url);
-			var get_readme = data.readme;
-			var get_description = data.description;
-			var get_complete_status = data.complete_status;
-			var get_multi = data.multi;
-			var get_subproject = data.subproject;
-			const modalContent = `
-				<div class="detail-title">Information about ${repo}</div><br>
-				<div class="detail-name">Name: ${get_name}</div><br>
-				<div class="detail-url">URL: <a href=https://${get_url} target="_blank">https:/${get_url}</a></div><br>
-				<div class="detail-description">Description: ${get_description}</div><br>
-				<div class="detail-complete-status">Complete Status: ${get_complete_status}</div><br>
-				<div class="detail-multi">Multi: ${get_multi}</div><br>
-				<div class="detail-subproject">Subproject: ${get_subproject}</div><br>
-			`;
-			document.getElementById('modal-content').innerHTML = modalContent;
-			const readme = `<div class="detail-readme">${get_readme}</div><br>`;
-			const htmlReadme = marked.parse(readme);
-			document.getElementById('modal-content').innerHTML += htmlReadme;
-		})
-		.catch((error) => {
-			console.error('There has been a problem with your fetch operation:', error);
-		});
-		
-		myModal.open('#myModal');
-
-		const target = intersects2[0].object.position;
-		cameraControls.moveTo(target.x, target.y, target.z, true);
-	
-		showRepoName(intersects2[0].object.name);
+		ShowRepoFunc(intersects2[0].object.name);
 		SliderDisplayChange(false);
 	}
 
@@ -655,6 +668,5 @@ globalThis.cameraControls = cameraControls;
 globalThis.customFitTo = customFitTo;
 window.showAll = showAll;
 window.showCategoryDetail = showCategoryDetail;
-
-
+window.ShowRepoFunc = ShowRepoFunc;
 export { showAll };
