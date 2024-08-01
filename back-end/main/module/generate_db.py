@@ -4,9 +4,10 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 import platform
 
+# category weights
 category_weight = [3, 2, 2, 2, 2]
 
-# 카테고리 좌표
+# coordinates of each category
 category_coords = {
     'game&simulation':  np.array([-3, -5, -8]),
     'optimization':     np.array([3, -5, -4]),
@@ -30,41 +31,39 @@ category_coords = {
     'frontend':         np.array([3, 5, 8]),
 }
 
-
+# get_weights is a function that returns a dictionary of category weights by combining the category and weight lists.
+# return : dictionary of category weights
 def get_weights(categories, weights):
     weight_dict = {category: weight for category, weight in zip(categories, weights)}
     return weight_dict
 
-# 거리 계산 함수
+# weighted_distance is a function that calculates the weighted distance between the repository position and the category position.
+# np.linalg.norm : calculates the Euclidean distance between two points
+# return : weighted distance
 def weighted_distance(repo_pos, categories, weights):
     distance = 0
     for category in categories:
         weight = weights.get(category, 1)  # 기본 가중치를 1로 설정
         category_pos = category_coords[category]
         distance += weight * np.linalg.norm(repo_pos - category_pos)
-
     return distance
 
-# 최적의 위치 계산 함수
+# find_optimal_location is a function that finds the optimal location of the repository by minimizing the weighted distance.
+# minimize : finds the minimum value of a function using the L-BFGS-B method
+# L-BFGS-B : a limited-memory quasi-Newton optimization algorithm that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm
+# return : optimal location
 def find_optimal_location(categories, weights):
     initial_guess = np.zeros(3)
     result = minimize(weighted_distance, initial_guess, args=(categories, weights), method='L-BFGS-B')
     return result.x
 
-def generate_database():
-    current_os = platform.system()
-    if current_os == 'Windows':
-        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
-    else:
-        PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
-    client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
-    try:
-        # 연결 테스트
-        client.admin.command('ismaster')
-        print('Connected to MongoDB')
-    except ConnectionFailure:
-        print('MongoDB server not available')
 
+# generate_database is a function that generates a database with the calculated repository and category positions.
+# repo-position : that contains the repository name and its position
+# category-positions : that contains the category name and its position
+# repo-category : that contains the repository name and its categories
+# return : none
+def generate_database(client):
     # 데이터베이스, 컬렉션 로드
     db = client['portfolio']
     database = db['database']
@@ -89,15 +88,19 @@ def generate_database():
         optimal_location = find_optimal_location(categories, weights)
         repo_optimal_locations[repo] = optimal_location
 
+    collection.drop()
     # 레포지토리 위치 저장
     for repo, position in repo_optimal_locations.items():
         collection.insert_one({'repo': repo, 'position': position.tolist()})
 
+    collection2.drop()
+    # 카테고리 위치 저장
     for category, coord in category_coords.items():
         collection2.insert_one({'category': category, 'position': coord.tolist()})
     
+    collection3.drop()
+    # 레포지토리-카테고리 연결 저장
     for repo, categories in get_category_weights.items():
         # array 로 들어가게 수정
         categories = list(categories.keys())
         collection3.insert_one({'repo': repo, 'categories': categories})
-    client.close()

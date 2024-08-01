@@ -6,7 +6,10 @@ import uvicorn
 import datetime
 import pytz
 
-def save_log_to_mongodb(log_message):
+# Save the log to the MongoDB
+# Timestamp: UTC time + 9 hours (KST) => Asia/Seoul timezone
+# Logs is saved by date (e.g., 2021-08-01)
+def save_log_to_mongodb(log_message, client):
     try:
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         utc_now = datetime.datetime.now(datetime.timezone.utc)
@@ -19,31 +22,25 @@ def save_log_to_mongodb(log_message):
             "timestamp": kst_now,
             "message": log_message
         }
-
-        current_os = platform.system()
-        if current_os == 'Windows':
-            PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
-        else:
-            PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
-        client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
         
         log_db = client['log']
         log = log_db[today]
         log.insert_one(log_entry)
         client.close()
-
     except Exception as e:
         print(f"Failed to save log to MongoDB: {e}")
 
-def access_log():
+# Access log
+# Save the access log to the MongoDB -> Log data is terminal output
+def access_log(client):
     logger = logging.getLogger('uvicorn.access')
     console_formatter = uvicorn.logging.ColourizedFormatter("{asctime} - {message}", style="{", use_colors=True)
     
-    # MongoDB 핸들러
+    # MongoDB Handler
     class MongoDBHandler(logging.Handler):
         def emit(self, record):
             log_message = self.format(record)
-            save_log_to_mongodb(log_message)
+            save_log_to_mongodb(log_message, client)
 
     mongodb_handler = MongoDBHandler()
     mongodb_handler.setFormatter(console_formatter)

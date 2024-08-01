@@ -1,36 +1,36 @@
-from bson import ObjectId
-from pymongo import MongoClient
-import platform
 
-def find_repo_data(repo_name):
 
-    current_os = platform.system()
-    if current_os == 'Windows':
-        PASSWORD = open("C:/Users/admin/project/portfolio-project/back-end/main/database/password-mongo-token.txt", "r").read().strip()
-    else:
-        PASSWORD = open("/app/mongo-token.txt", "r").read().strip()
-    client = MongoClient("mongodb+srv://jsilvercastle:" + PASSWORD + "@portfolio.tja9u0o.mongodb.net/?retryWrites=true&w=majority&appName=portfolio")
-    
-    db = client['portfolio']
-    repos = db['database']
+# Find the data for a repository in the database using the repository name
+# Return : Dictionary containing the name, url, readme, description, complete_status, multi, category, and subproject of the repository
+def find_repo_data(repo_name, client):
+    try:
+        # Use a context manager to ensure the MongoClient is closed properly
+        db = client['portfolio']
+        repos = db['database']
 
-    # /가 존재하면 /기준 뒤에 있는 것을 repo_name으로 설정
-    if '/' in repo_name:
-        repo_name = repo_name.split('/')[1]
-    
-    repo = repos.find_one({"name": repo_name})
-    response = {
-        "name": repo.get('name', 'default_name'),
-        "url": repo.get('url', 'default_url'),
-        "readme": repo.get('readme', 'default_readme'),
-        "description": repo.get('description', 'default_description'),
-        "complete_status": repo.get('complete_status', 'default_status'),
-        "multi": repo.get('multi', 'default_multi'),
-        "category": repo.get('category', 'default_category'),
-        "subproject": repo.get('subproject', 'default_subproject')
-    }
+        # If '/' exists in repo_name, set repo_name to the part after '/'
+        if '/' in repo_name:
+            repo_name = repo_name.split('/')[1]
 
-    client.close()
+        repo = repos.find_one({"name": repo_name})
+        if repo is None:
+            raise ValueError(f"Repository {repo_name} not found in the database")
+
+        response = {
+            "name": repo.get('name', 'default_name'),
+            "url": repo.get('url', 'default_url'),
+            "readme": repo.get('readme', 'default_readme'),
+            "description": repo.get('description', 'default_description'),
+            "complete_status": repo.get('complete_status', 'default_status'),
+            "multi": repo.get('multi', 'default_multi'),
+            "category": repo.get('category', 'default_category'),
+            "subproject": repo.get('subproject', 'default_subproject')
+        }
+
+    except Exception as e:
+        # Handle exceptions and ensure resources are freed
+        print(f"Error finding repository data: {e}")
+        raise e
+
     return response
-
 

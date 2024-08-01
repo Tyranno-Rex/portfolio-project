@@ -2,11 +2,17 @@
 from requests import get
 import base64
 import platform
-import pydantic
 from module import save_repo_data_in_mongo as saveInMongo
 import datetime
 
-# 1. 모든 repository의 이름과 url을 가져온다.
+# Base64 decoding
+def decode_base64(content):
+    base64_bytes = content.encode('ascii')
+    message_bytes = base64.b64decode(base64_bytes)
+    return message_bytes.decode('utf-8')
+
+# Get the name and url of all repositories by using the GitHub API
+# Return : List of dictionaries containing the name and url of all repositories
 def get_all_repos(token):
     url_all_repos = "https://api.github.com/user/repos"
     headers_all_repos = {
@@ -26,14 +32,11 @@ def get_all_repos(token):
         })
     return repo_all_list
 
-def decode_base64(content):
-    base64_bytes = content.encode('ascii')
-    message_bytes = base64.b64decode(base64_bytes)
-    return message_bytes.decode('utf-8')
-
-# 2. 각 repository의 README.md를 가져온다.
-def get_readme(repo_all_list, OWNER_NAME, token):
-    current_os = platform.system()
+# Get the readme of all repositories
+# return : none
+# Save the data in the MongoDB
+# Saved data : name, url, readme, description, complete_status, multi, category, subproject, updated_at, generate_txt_gpt
+def get_readme(repo_all_list, OWNER_NAME, token, client):
     for repo in repo_all_list:
         url_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/readme"
         headers_readme = {
@@ -72,18 +75,17 @@ def get_readme(repo_all_list, OWNER_NAME, token):
             if multi == 'TRUE':
                 for sub_project in project_subproject:
                     subproject_readme = get_subproject_readme(repo, sub_project, OWNER_NAME, token)
-                    saveInMongo.save_repo_data_in_mongo(subproject_readme, current_os)
+                    saveInMongo.save_repo_data_in_mongo(subproject_readme, client)
                     repo_all_list.append(subproject_readme)
 
             repo['name'] = project_name[0]
             repo['url'] = project_url[0]
-            saveInMongo.save_repo_data_in_mongo(repo, current_os)
+            saveInMongo.save_repo_data_in_mongo(repo, client)
         else:
             repo["readme"] = ""
-    data_in_mongo = saveInMongo.get_all_repos_in_mongo()
-    return data_in_mongo
 
-# 3. 각 repository에서 세부 파일에서 readme가 있는 경우 가져온다.
+# Get the readme of the subproject that is included in the multi-project
+# return : dictionary containing the name, url, readme, description, complete_status, multi, category, subproject, updated_at, generate_txt_gpt
 def get_subproject_readme(repo, subproject, OWNER_NAME, token):
     url_sub_readme = f"https://api.github.com/repos/{OWNER_NAME}/{repo['name']}/contents/{subproject}"
     headers_sub_readme = {
