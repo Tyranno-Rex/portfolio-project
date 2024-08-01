@@ -231,17 +231,35 @@ label {
     margin-bottom: 5px; /* 항목 사이에 간격을 줄 수 있습니다 */
 }
 
+#userInput {
+    font-family: 'komikax';
+    font-size: 14px;
+}
+
+#chattingInfoButton {
+    position: absolute;
+    left: 15px;
+    top: 8px;
+    background-color: gray;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    z-index: 10;
+    border-radius: 10px;
+    color: white;
+}
+
 #closeChatButton {
     position: absolute;
     right: 15px;
-    top: 5%;
-    transform: translateY(-50%);
+    top: 8px; 
     background-color: #f44336;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     padding: 5px 10px;
+    z-index: 10;
 }
 
 #closeChatButton:hover {
@@ -256,33 +274,60 @@ label {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    display: flex; 
     flex-direction: column;
-
     top: calc(100% - 500px); 
     right: 0;
     display: none; 
+}
+
+.chat-message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    background-color: #f1f1f1;
+    word-wrap: break-word;
+    max-width: 100%;
+    display: inline-block;
+}
+
+.chat-message.user {
+    background-color: #656568;
+    text-align: right;
+    float: right;
+    border-top-right-radius: 0;
+    border: 2px solid #000000;
+}
+
+.chat-message.bot {
+    background-color: #017f7f;
+    text-align: left;
+    float: left;
+    color: #0b1730;
+    border-top-left-radius: 0;
+    border: 2px solid #000000;
 }
 
 .chat-messages {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    border-width: 1px;
+    margin-top: 40px;
+    font-family: 'komikax';
+    color: white;
+    display: flex;
+    flex-direction: column;
 }
 
-.chat-message {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    background-color: #f1f1f1;
-    word-wrap: break-word;
+.chat-messages::after {
+    content: '';
+    clear: both;
+    display: table;
 }
 
-.chat-message.user {
-    background-color: #e1ffc7;
-    text-align: right;
-}
 
 .chat-input {
     display: flex;

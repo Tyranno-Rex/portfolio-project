@@ -95,12 +95,13 @@
     
 	<div class="chat-container">
 		<div class="chat-header">
-            <button id="closeChatButton">닫기</button>
+			<button id="chattingInfoButton">?</button>
+            <button id="closeChatButton">Close</button>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input">
-            <input type="text" id="userInput" placeholder="finetuning chatbot" />
-            <button onclick="sendMessage()">전송</button>
+            <input type="text" id="userInput" placeholder="ask like 'How to make this site?'">
+            <button id="sendButton" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
