@@ -19,7 +19,6 @@ def save_repo_data_in_mongo(repo, client):
         print("Insert: ", repo["name"])
         repo['_id'] = str(ObjectId())
         repos.insert_one(repo)
-        client.close()
         return True
     
     past_name = past_repo["name"][0]
@@ -52,6 +51,3 @@ def save_repo_data_in_mongo(repo, client):
     else:
         print("Update: ", repo["name"])
         repos.update_one({"name": repo["name"]}, {"$set": repo})
-    
-    client.close()
-

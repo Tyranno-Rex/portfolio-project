@@ -26,7 +26,6 @@ def save_log_to_mongodb(log_message, client):
         log_db = client['log']
         log = log_db[today]
         log.insert_one(log_entry)
-        client.close()
     except Exception as e:
         print(f"Failed to save log to MongoDB: {e}")
 
