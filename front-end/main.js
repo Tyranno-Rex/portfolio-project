@@ -44,6 +44,7 @@ document.body.appendChild(hoveredLabel);
 var ClickedCategory = false;
 var ClickedRepo = false;
 var WindowChange = true;
+var GameModeFlag = false;
 
 
 const WhenStart = "2022-07-09";
@@ -615,6 +616,111 @@ function ResetClick(category_flag, repo_flag) {
 	}
 }
 
+let spheres = []; // 공들
+let GamePoint = 0; // 게임 점수
+let GameLimitTime = 60; // 게임 제한 시간
+
+function createSphere(startPoint, direction) {
+    var geometry = new THREE.SphereGeometry(2, 32, 32);
+    var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var sphere = new THREE.Mesh(geometry, material);
+    sphere.position.copy(startPoint);
+    sphere.userData.direction = direction;
+    sphere.userData.speed = 500; // 공의 속도 설정
+    spheres.push(sphere);
+    scene.add(sphere);
+}
+
+function moveSpheres(delta) {
+    for (let i = spheres.length - 1; i >= 0; i--) {
+        let sphere = spheres[i];
+        sphere.position.add(sphere.userData.direction.clone().multiplyScalar(sphere.userData.speed * delta));
+		
+
+		// 카테고리나 레포와 충돌했을 때 -> 카테고리와 레포를 삭제하고, 공을 삭제한다.
+		for (var j = 0; j < planets.length; j++) {
+			if (sphere.position.distanceTo(planets[j].position) < 5) {
+				scene.remove(planets[j]);
+				planets.splice(j, 1);
+				scene.remove(sphere);
+				spheres.splice(i, 1);
+				GamePoint += 10;
+				document.getElementsByClassName('GameModePoint')[0].innerHTML = "POINT: " + GamePoint;
+			}
+		}
+
+		for (var j = 0; j < repoObjects.length; j++) {
+			if (sphere.position.distanceTo(repoObjects[j].mesh.position) < 5) {
+				scene.remove(repoObjects[j].mesh);
+				repoObjects.splice(j, 1);
+				scene.remove(sphere);
+				spheres.splice(i, 1);
+				GamePoint += 1;
+				document.getElementsByClassName('GameModePoint')[0].innerHTML = "POINT: " + GamePoint;
+			}
+		}
+
+
+        // 공이 일정 거리를 벗어나면 제거
+        if (sphere.position.distanceTo(camera.position) > 2000) {
+            scene.remove(sphere);
+            spheres.splice(i, 1);
+        }
+    }
+}
+
+function onMouseClick2(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+
+	var startPoint = camera.position.clone().add(raycaster.ray.direction.clone().multiplyScalar(30));
+    var direction = raycaster.ray.direction.clone().normalize();
+    createSphere(startPoint, direction);
+}
+
+function GameModeUIDisplayChange() {
+    const showChatButton = document.getElementById('showChatButton');
+	const chatBubble = document.getElementById('chatBubble');
+	const indicatorContent = document.getElementById('showIndicatorButton');
+	const commandButton = document.getElementsByClassName('commands')[0];
+	const title = document.getElementsByClassName('title')[0];
+	const GameUI = document.getElementById('GameUI');
+	
+	if (GameModeFlag) {
+		showChatButton.style.display = 'none';
+		chatBubble.style.display = 'none';
+		indicatorContent.style.display = 'none';
+		commandButton.style.display = 'none';
+		title.style.display = 'none';
+		GameUI.style.display = 'block';
+		renderer.domElement.style.cursor = 'crosshair';
+	} else {
+		showChatButton.style.display = 'block';
+		chatBubble.style.display = 'block';
+		indicatorContent.style.display = 'block';
+		commandButton.style.display = 'block';
+		title.style.display = 'block';
+		GameUI.style.display = 'none';
+		SliderDisplayChange(true);
+		renderer.domElement.style.cursor = 'auto';
+	}
+
+}
+
+// 4. GAME MODE
+function GameMode() {
+	GamePoint = 0;
+	GameLimitTime = 60;
+	GameModeFlag = !GameModeFlag;
+	ResetClick(false, false);
+	SliderDisplayChange(false);
+	GameModeUIDisplayChange();
+	renderer.domElement.removeEventListener('click', onMouseClick, false);
+	renderer.domElement.removeEventListener('mousemove', onMouseMove, false);
+	renderer.domElement.addEventListener('click', onMouseClick2, false);
+}
+
 renderer.domElement.addEventListener('click', onMouseClick, false);
 renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 
@@ -623,7 +729,16 @@ function animate() {
     const delta = clock.getDelta();
     const updated = cameraControls.update(delta);
 
-
+	if (GameModeFlag) {
+		if (GameLimitTime <= 0) {
+			GameModeFlag = false;
+			GameModeUIDisplayChange();
+			alert("Game Over! Your Point is " + GamePoint);
+		}
+		GameLimitTime -= delta;
+		document.getElementsByClassName('GameModeTime')[0].innerHTML = "TIME: " + Math.floor(GameLimitTime);
+		moveSpheres(delta);	
+	}
     updateRepos();
 	renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
@@ -668,4 +783,5 @@ globalThis.customFitTo = customFitTo;
 window.showAll = showAll;
 window.showCategoryDetail = showCategoryDetail;
 window.ShowRepoFunc = ShowRepoFunc;
+window.GameMode = GameMode;
 export { showAll };
