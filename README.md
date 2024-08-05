@@ -9,14 +9,11 @@
 ## click category
 ![카테고리클릭](https://github.com/user-attachments/assets/d551afb1-0e7c-4f54-9206-520ee33a70b5)
 
-## click repo 
+## click repo
 ![레포클릭](https://github.com/user-attachments/assets/d147516f-c359-47e9-969d-f0329a8452bf)
 
 ## click repo detail
 ![레포클릭](https://github.com/user-attachments/assets/57a98eb8-2560-48e5-a95f-900aabd0c16d)
-
-## click repo
-![레포궤도](https://github.com/user-attachments/assets/de0ff836-3e0d-409f-96f1-cece998f90c2)
 
 ## GPT answer that learned my works 
 ![GPT 기반 질문](https://github.com/user-attachments/assets/4aa4ca04-d891-448e-95fb-637db61c8379)
