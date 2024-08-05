@@ -618,7 +618,7 @@ function ResetClick(category_flag, repo_flag) {
 
 let spheres = []; // 공들
 let GamePoint = 0; // 게임 점수
-let GameLimitTime = 60; // 게임 제한 시간
+let GameLimitTime = 30; // 게임 제한 시간
 
 function createSphere(startPoint, direction) {
     var geometry = new THREE.SphereGeometry(2, 32, 32);
@@ -711,7 +711,7 @@ function GameModeUIDisplayChange() {
 // 4. GAME MODE
 function GameMode() {
 	GamePoint = 0;
-	GameLimitTime = 60;
+	GameLimitTime = 30;
 	GameModeFlag = !GameModeFlag;
 	ResetClick(false, false);
 	SliderDisplayChange(false);
@@ -734,6 +734,7 @@ function animate() {
 			GameModeFlag = false;
 			GameModeUIDisplayChange();
 			alert("Game Over! Your Point is " + GamePoint);
+			location.reload(true);
 		}
 		GameLimitTime -= delta;
 		document.getElementsByClassName('GameModeTime')[0].innerHTML = "TIME: " + Math.floor(GameLimitTime);
