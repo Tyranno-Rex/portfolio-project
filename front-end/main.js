@@ -80,6 +80,7 @@ function updateCreditText() {
 		target="_blank" style="color: white;">Tyranno-Rex</a>\
         <br>contact: jsilvercastle@gmail.com\
 		<br>notion : <a href="https://uttermost-meteoroid-5fa.notion.site/c589ce11b68443e6ab545ad8879a6cc1">JSilverCastle\'s Notion</a>\
+		<br>resume : <a href="https://uttermost-meteoroid-5fa.notion.site/b52bd3e5ca494049b06d6a9a9d19f846?pvs=4">JSilverCastle\'s Resume</a>\
         <br>From my first hello world : \
         ' + convertedTime.years + ' years ' + convertedTime.days + ' days \
         ' + convertedTime.hours + ' hours ' + convertedTime.minutes + ' minutes \
@@ -165,7 +166,6 @@ function getRandomColor() {
 	return parseInt(color, 16);
 }
 
-// fetch("http://192.168.3.3:8000/repo-category")
 fetch("https://jeongeunseong.site:8000/repo-category")
 .then((response) => {
 	if (!response.ok) {
