@@ -42,13 +42,9 @@ function showChat() {
     const ModalContent = `'
         <div class="detail-title">Chatbot</div>
         <div class="detail-description">
-        This is a chatbot that can help you with your questions.
-        </div>
-        <div class="detail-description">
+        This is a chatbot that can help you with your questions. 
         But, I'm a poor Guy, So set a password for Chatbot.
-        </div>
-        <div class="detail-description">
-        Please enter the password to chat with me. 
+        Please enter the password to chat with me. <br>
         </div>
         <br><br>
         <input type="password" id="password" placeholder="Enter Password">
