@@ -84,7 +84,10 @@ function updateCreditText() {
         <br>From my first hello world : \
         ' + convertedTime.years + ' years ' + convertedTime.days + ' days \
         ' + convertedTime.hours + ' hours ' + convertedTime.minutes + ' minutes \
-        ' + convertedTime.seconds + ' seconds';
+        ' + convertedTime.seconds + ' seconds'+
+		'<br><br>' +
+		'<br> Jesus answered, “I am the way and the truth and the life. No one comes to the Father except through me.'
+		+ '<br> John 14:6';
 }
 
 let creditText = document.createElement('div');
