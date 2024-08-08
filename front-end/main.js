@@ -258,10 +258,11 @@ function makeStarRoad(data) {
 
             // 각 카테고리마다 다른 각도 오프셋 적용
             var angleOffset = Math.random() * Math.PI * 2;
+            // var angleOffset = 0;
             // 각 카테고리마다 다른 기울기 적용
             var tiltAngle = Math.random() * Math.PI * 2;
 			
-			const detail= 20
+			const detail= 10
             for (var index = 0; index < detail; index++) {
                 var angle = (index * Math.PI * 2 / detail) + angleOffset;
                 // var angle = (index * Math.PI * 2 / detail);
@@ -333,45 +334,86 @@ function makeStarRoad(data) {
 	
 }
 
-function updateRepos() {
+// function updateRepos() {
 	
-	categoryLabels.forEach(label => {
-		scene.remove(label);
-	});
+// 	categoryLabels.forEach(label => {
+// 		scene.remove(label);
+// 	});
+// 	categoryLabels = [];
+// 	SelectedCategory.forEach(category => {
+// 		planets.forEach(planet => {
+// 			if (planet.name == category) {
+// 				var vector = new THREE.Vector3();
+// 				vector.copy(planet.position).project(camera);
+// 				var div = document.createElement('div');
+// 				div.className = 'label';
+// 				div.textContent = category;
+// 				div.style.color = 'white';
+// 				div.style.fontSize = '20px';
+// 				div.style.fontFamily = 'SoDoSans';
+// 				var label = new CSS2DObject(div);
+// 				label.position.set(planet.position.x, planet.position.y, planet.position.z);
+// 				scene.add(label);
+// 				categoryLabels.push(label);
+// 			}
+// 		});
+// 	});
+//     repoLabels.forEach(label => {
+//         scene.remove(label);
+//     });
+//     repoLabels = []; 
+//     repoObjects.forEach(repo => {
+//         repo.parameter = (repo.parameter + 0.0001) % 1; // 속도 조절 가능
+//         var position = repo.curve.getPointAt(repo.parameter);
+//         repo.mesh.position.copy(position);
+//         if (repo.namevisible == true) {
+//             var vector = new THREE.Vector3();
+//             vector.copy(position).project(camera);
+//             var div = document.createElement('div');
+//             div.className = 'label';
+//             div.textContent = repo.name;
+//             div.style.color = 'white';
+//             div.style.fontSize = '10px';
+// 			div.style.fontFamily = 'SoDoSans';
+//             var label = new CSS2DObject(div);
+//             label.position.set(position.x + 3, position.y + 3, position.z + 3);
+//             scene.add(label);
+//             repoLabels.push(label); // 배열에 라벨 추가
+//         }    
+//     });
+// }
 
-	categoryLabels = [];
-	
-	SelectedCategory.forEach(category => {
-		planets.forEach(planet => {
-			if (planet.name == category) {
-				var vector = new THREE.Vector3();
-				vector.copy(planet.position).project(camera);
-				var div = document.createElement('div');
-				div.className = 'label';
-				div.textContent = category;
-				div.style.color = 'white';
-				div.style.fontSize = '20px';
-				div.style.fontFamily = 'SoDoSans';
-				var label = new CSS2DObject(div);
-				label.position.set(planet.position.x, planet.position.y, planet.position.z);
-				scene.add(label);
-				categoryLabels.push(label);
-			}
-		});
-	});
+function updateRepos(delta) {
+    categoryLabels.forEach(label => {
+        scene.remove(label);
+    });
+    categoryLabels = [];
+    SelectedCategory.forEach(category => {
+        planets.forEach(planet => {
+            if (planet.name == category) {
+                var vector = new THREE.Vector3();
+                vector.copy(planet.position).project(camera);
+                var div = document.createElement('div');
+                div.className = 'label';
+                div.textContent = category;
+                div.style.color = 'white';
+                div.style.fontSize = '20px';
+                div.style.fontFamily = 'SoDoSans';
+                var label = new CSS2DObject(div);
+                label.position.set(planet.position.x, planet.position.y, planet.position.z);
+                scene.add(label);
+                categoryLabels.push(label);
+            }
+        });
+    });
     repoLabels.forEach(label => {
         scene.remove(label);
     });
-
-
-
-    repoLabels = []; 
-
+    repoLabels = [];
     repoObjects.forEach(repo => {
-        repo.parameter = (repo.parameter + 0.0001) % 1; // 속도 조절 가능
+        repo.parameter = (repo.parameter + delta * 0.01) % 1; // delta 값을 곱하여 프레임 속도에 독립적인 속도로 회전합니다.
         var position = repo.curve.getPointAt(repo.parameter);
         repo.mesh.position.copy(position);
-
         if (repo.namevisible == true) {
             var vector = new THREE.Vector3();
             vector.copy(position).project(camera);
@@ -380,7 +422,7 @@ function updateRepos() {
             div.textContent = repo.name;
             div.style.color = 'white';
             div.style.fontSize = '10px';
-			div.style.fontFamily = 'SoDoSans';
+            div.style.fontFamily = 'SoDoSans';
             var label = new CSS2DObject(div);
             label.position.set(position.x + 3, position.y + 3, position.z + 3);
             scene.add(label);
@@ -731,7 +773,6 @@ renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 function animate() {
     const delta = clock.getDelta();
     const updated = cameraControls.update(delta);
-
 	if (GameModeFlag) {
 		if (GameLimitTime <= 0) {
 			GameModeFlag = false;
@@ -743,7 +784,7 @@ function animate() {
 		document.getElementsByClassName('GameModeTime')[0].innerHTML = "TIME: " + Math.floor(GameLimitTime);
 		moveSpheres(delta);	
 	}
-    updateRepos();
+    updateRepos(delta);
 	renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
     requestAnimationFrame(animate);
